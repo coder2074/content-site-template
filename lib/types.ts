@@ -164,11 +164,14 @@ export interface ComponentsConfig {
 export interface HeroComponentConfig {
   badge: {
     enabled: boolean
+    text?: string
     style: string  // "blue" | "green" | "purple" | "yellow"
     position: string  // "top" | "center"
   }
   layout: string  // "centered" | "left" | "right"
   backgroundStyle: string  // "gradient" | "solid" | "none"
+  headline?: string
+  subheadline?: string
 }
 
 export interface TrustBadgesComponentConfig {
@@ -187,6 +190,7 @@ export interface CategoriesSectionComponentConfig {
   layout: "grid" | "list"
   columns: number
   gap: string
+  title?: string
 }
 
 export interface ComparisonTableComponentConfig {

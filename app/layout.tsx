@@ -27,8 +27,9 @@ export default async function RootLayout({
   
   // Get logo URL from theme config or construct default path
   const logoUrl = themeConfig.logo?.url || getSiteHeaderLogoUrl(process.env.NEXT_PUBLIC_SITE_ID)
-  const showLogo = !!themeConfig.logo?.url  // Only show if explicitly configured
-  
+  const logoConfig = themeConfig.logo
+  const showLogo = !!logoConfig?.url
+
   return (
     <html lang="en">
       <head>
@@ -94,12 +95,12 @@ export default async function RootLayout({
             <div className="flex items-center justify-between h-full">
               {/* Logo/Brand */}
               <Link href="/" className="flex items-center gap-3 group">
-                {showLogo && (
+                {showLogo && logoConfig && (
                   <LogoImage
                     src={logoUrl}
                     alt={siteContent.branding.siteName}
-                    width={themeConfig.logo.width}
-                    height={themeConfig.logo.height}
+                    width={logoConfig.width}
+                    height={logoConfig.height}
                     className="object-contain"
                   />
                 )}

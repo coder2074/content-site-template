@@ -62,30 +62,50 @@ function getDefaultThemeConfig(): ThemeConfig {
   return {
     schemaVersion: "1.0",
     lastUpdated: new Date().toISOString(),
-    branding: {
-      siteName: "My Site",
-      tagline: "Find the Top Picks, Make Smarter Choices",
-      description: "Expert reviews, honest comparisons, and real-world testing to help you choose products with confidence."
+    colors: {
+      primary: "#2563eb",
+      secondary: "#8b5cf6",
+      accent: "#f59e0b"
     },
-    homepage: {
+    typography: {
+      fontFamily: "Inter",
+      headingFont: "Inter",
+      bodyFont: "Inter"
+    },
+    layout: {
+      maxWidth: "1280px",
+      containerPadding: "2rem",
+      headerHeight: "80px"
+    },
+    components: {
       hero: {
         badge: {
           enabled: true,
           text: "✨ Updated for 2026",
-          style: "blue"
+          style: "blue",
+          position: "top"
         },
+        layout: "centered",
+        backgroundStyle: "gradient",
         headline: "Find the Top Picks,<br />Make Smarter Choices",
         subheadline: "Expert reviews, honest comparisons, and real-world testing to help you choose products with confidence."
       },
       trustBadges: {
         enabled: true,
-        mode: "auto"
+        mode: "auto",
+        style: "minimal"
       },
       categoriesSection: {
         enabled: true,
         title: "Browse by Category",
-        layout: "grid"
+        layout: "grid",
+        columns: 3,
+        gap: "2rem"
       }
+    },
+    animations: {
+      enabled: true,
+      duration: "300ms"
     }
   }
 }
