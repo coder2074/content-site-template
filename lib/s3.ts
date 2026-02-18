@@ -1,5 +1,5 @@
 // ============================================================================
-// FILE: lib/s3.ts (UPDATED FOR 2-LEVEL STRUCTURE)
+// FILE: lib/s3.ts (UPDATED FOR STATIC EXPORT WITH FORCE-CACHE)
 // ============================================================================
 import { SiteConfig, PageContent, ThemeConfig, SiteContent } from './types'
 import humps from 'humps'
@@ -8,7 +8,7 @@ const CONTENT_BASE_URL = process.env.CONTENT_BASE_URL;
 
 export async function fetchSiteConfig(): Promise<SiteConfig> {
   const url = `${CONTENT_BASE_URL}/site-config.json`
-  const response = await fetch(url, { next: { revalidate: 60 } })
+  const response = await fetch(url, { cache: 'force-cache' })
   
   if (!response.ok) {
     throw new Error(`Failed to fetch site config: ${response.statusText}`)
@@ -26,7 +26,7 @@ export async function fetchThemeConfig(): Promise<ThemeConfig> {
   console.log("Fetching theme config from:", themeConfigFullUrl)
 
   try {
-    const response = await fetch(themeConfigFullUrl, { cache: "no-store" })
+    const response = await fetch(themeConfigFullUrl, { cache: 'force-cache' })
 
     if (!response.ok) {
       console.warn("Theme config not found, using defaults")
@@ -45,7 +45,7 @@ export async function fetchThemeConfig(): Promise<ThemeConfig> {
 
 export async function fetchSiteContent(): Promise<SiteContent> {
   const url = `${CONTENT_BASE_URL}/site-content.json`
-  const response = await fetch(url, { next: { revalidate: 60 } })
+  const response = await fetch(url, { cache: 'force-cache' })
   
   if (!response.ok) {
     throw new Error(`Failed to fetch site config: ${response.statusText}`)
@@ -114,7 +114,7 @@ export async function fetchCategoryDescription(categoryId: string): Promise<stri
   try {
     const response = await fetch(
       `${CONTENT_BASE_URL}/categories/${categoryId}/category-description.html`,
-      { cache: 'no-store' }
+      { cache: 'force-cache' }
     )
     if (!response.ok) return ''
     return response.text()
@@ -128,7 +128,7 @@ export async function fetchPageContent(
   page: string
 ): Promise<PageContent> {
   const url = `${CONTENT_BASE_URL}/categories/${category}/pages/${page}/page-content.json`
-  const response = await fetch(url, { next: { revalidate: 60 } })
+  const response = await fetch(url, { cache: 'force-cache' })
   
   if (!response.ok) {
     throw new Error(`Failed to fetch page content: ${response.statusText}`)

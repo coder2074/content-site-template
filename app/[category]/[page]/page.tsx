@@ -80,7 +80,7 @@ export default async function AffiliatePage({ params }: AffiliatePageProps) {
     console.log("➡️ fetching page pageContent")
     pageContent = await fetchPageContent(categoryId, pageId)
     console.log("✅ pageContent fetched")
-    console.log("Here is the pageContent:", pageContent)
+    // console.log("Here is the pageContent:", pageContent)
   } catch (err) {
     console.error("❌ fetchPageContent failed:", err)
     notFound()
