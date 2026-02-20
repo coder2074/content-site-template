@@ -7,29 +7,24 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const siteConfig = await fetchSiteConfig()
   return {
-    title: `Guides & Articles`,
-    description: `Woodworking guides, tips, and tutorials to help you build your dream shop.`,
+    title: 'Guides & Articles',
+    description: 'Woodworking guides, tips, and tutorials to help you build your dream shop.',
   }
 }
 
 export default async function BlogPage() {
   const siteConfig = await fetchSiteConfig()
 
-  // Get published articles only
   const allArticles: ArticleMeta[] = (siteConfig.articles || [])
-    .filter(a => a.status === 'published')
-    .sort((a, b) =>
+    .filter((a: ArticleMeta) => a.status === 'published')
+    .sort((a: ArticleMeta, b: ArticleMeta) =>
       new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime()
     )
 
-  // Filter by tag if provided
-  const articles = allArticles
-
   // Collect all unique tags across all articles
   const allTags = Array.from(
-    new Set(allArticles.flatMap(a => a.tags))
+    new Set(allArticles.flatMap((a: ArticleMeta) => a.tags))
   ).sort()
 
   return (
@@ -53,61 +48,44 @@ export default async function BlogPage() {
         </p>
       </div>
 
-      {/* Tag Filter Row */}
+      {/* Tag Filter Row — links to static tag pages */}
       {allTags.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-10 justify-center">
-          {/* All tag */}
-          <Link
-            href="/blog"
-            className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
-              !tag
-                ? 'text-white'
-                : 'bg-gray-100 hover:bg-gray-200'
-            }`}
-            style={!tag ? { backgroundColor: 'var(--color-primary)', color: 'white' } : {}}
+          <span
+            className="px-4 py-2 rounded-full text-sm font-semibold text-white"
+            style={{ backgroundColor: 'var(--color-primary)' }}
           >
             All
-          </Link>
-
-          {allTags.map(t => (
+          </span>
+          {allTags.map(tag => (
             <Link
-              key={t}
-              href={`/blog?tag=${t}`}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition capitalize`}
-              style={
-                tag === t
-                  ? { backgroundColor: 'var(--color-primary)', color: 'white' }
-                  : { backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-secondary)' }
-              }
+              key={tag}
+              href={`/blog/tag/${tag}`}
+              className="px-4 py-2 rounded-full text-sm font-semibold capitalize transition hover:opacity-80"
+              style={{
+                backgroundColor: 'var(--color-bg-primary)',
+                color: 'var(--color-text-secondary)'
+              }}
             >
-              {t}
+              {tag}
             </Link>
           ))}
         </div>
       )}
 
       {/* No articles state */}
-      {articles.length === 0 && (
+      {allArticles.length === 0 && (
         <div className="text-center py-20">
           <p style={{ color: 'var(--color-text-secondary)' }}>
-            {tag ? `No articles found for tag "${tag}".` : 'No articles published yet.'}
+            No articles published yet.
           </p>
-          {tag && (
-            <Link
-              href="/blog"
-              className="mt-4 inline-block underline"
-              style={{ color: 'var(--color-primary)' }}
-            >
-              View all articles
-            </Link>
-          )}
         </div>
       )}
 
       {/* Article Cards Grid */}
-      {articles.length > 0 && (
+      {allArticles.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {articles.map(article => (
+          {allArticles.map(article => (
             <ArticleCard key={article.articleId} article={article} />
           ))}
         </div>
@@ -116,9 +94,6 @@ export default async function BlogPage() {
   )
 }
 
-// ============================================================================
-// ARTICLE CARD COMPONENT (inline — small enough to keep here)
-// ============================================================================
 function ArticleCard({ article }: { article: ArticleMeta }) {
   return (
     <Link
@@ -126,9 +101,7 @@ function ArticleCard({ article }: { article: ArticleMeta }) {
       className="group block rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
       style={{ backgroundColor: 'var(--color-bg-primary)' }}
     >
-      {/* Card Body */}
       <div className="p-6">
-        {/* Tags */}
         {article.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-3">
             {article.tags.slice(0, 2).map(tag => (
@@ -146,7 +119,6 @@ function ArticleCard({ article }: { article: ArticleMeta }) {
           </div>
         )}
 
-        {/* Title */}
         <h2
           className="text-xl font-bold mb-3 group-hover:underline leading-snug"
           style={{
@@ -157,7 +129,6 @@ function ArticleCard({ article }: { article: ArticleMeta }) {
           {article.articleTitle}
         </h2>
 
-        {/* Excerpt */}
         <p
           className="text-sm leading-relaxed mb-4"
           style={{ color: 'var(--color-text-secondary)' }}
@@ -165,7 +136,6 @@ function ArticleCard({ article }: { article: ArticleMeta }) {
           {article.excerpt}
         </p>
 
-        {/* Footer */}
         <div className="flex items-center justify-between">
           <span
             className="text-xs"
