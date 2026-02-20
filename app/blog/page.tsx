@@ -14,13 +14,8 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default async function BlogPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ tag?: string }>
-}) {
+export default async function BlogPage() {
   const siteConfig = await fetchSiteConfig()
-  const { tag } = await searchParams
 
   // Get published articles only
   const allArticles: ArticleMeta[] = (siteConfig.articles || [])
@@ -30,9 +25,7 @@ export default async function BlogPage({
     )
 
   // Filter by tag if provided
-  const articles = tag
-    ? allArticles.filter(a => a.tags.includes(tag))
-    : allArticles
+  const articles = allArticles
 
   // Collect all unique tags across all articles
   const allTags = Array.from(

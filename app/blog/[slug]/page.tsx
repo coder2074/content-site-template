@@ -13,10 +13,20 @@ interface ArticlePageProps {
 }
 
 export async function generateStaticParams() {
+  console.log('=== generateStaticParams /blog/[slug] called ===')
+  
   const siteConfig = await fetchSiteConfig()
-  return (siteConfig.articles || [])
-    .filter(a => a.status === 'published')
-    .map(a => ({ slug: a.articleSlug }))
+  const articles = siteConfig.articles || []
+
+  // output: export requires at least one static param
+  // return a placeholder when no articles exist yet
+  if (articles.length === 0) {
+    return [{ slug: '_placeholder' }]
+  }
+
+  return articles.map((article: ArticleMeta) => ({
+    slug: article.articleSlug,
+  }))
 }
 
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
@@ -39,6 +49,10 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params
+
+  // Handle placeholder slug used during static build
+  // when no articles exist yet
+  if (slug === '_placeholder') notFound()
 
   // 1. Get article metadata from site-config
   const siteConfig = await fetchSiteConfig()
