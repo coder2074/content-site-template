@@ -430,6 +430,47 @@ export interface Goal {
 }
 
 // ============================================================================
+// ARTICLE META (FOR FUTURE BLOG/ARTICLE INTEGRATION)
+// ============================================================================
+
+export interface ArticleMeta {
+  articleId: string
+  articleSlug: string
+  articleTitle: string
+  excerpt: string
+  metaDescription: string
+  publishedDate: string
+  lastUpdated: string
+  featured: boolean
+  featuredOrder: number
+  status: string
+  tags: string[]
+  featuredImagePrompt?: string
+  relatedPages: string[]
+}
+
+export interface SiteConfig {
+  siteId: string
+  siteTitle: string
+  siteDescription?: string
+  categories: Category[]
+  articles?: ArticleMeta[]  // ← ADD to existing SiteConfig
+  stats?: SiteStats
+}
+
+// Also update SiteStats to include article counts
+export interface SiteStats {
+  totalItemsAnalyzed: number
+  totalItemsFeatured: number
+  totalPages: number
+  totalCategories: number
+  totalArticles?: number           // ← ADD
+  totalArticlesPublished?: number  // ← ADD
+  lastUpdated: string
+}
+
+
+// ============================================================================
 // HELPER FUNCTIONS
 // ============================================================================
 

@@ -167,3 +167,15 @@ export function getSiteHeaderLogoUrl(siteId?: string): string {
 export function hasSiteLogo(themeConfig: any): boolean {
   return !!(themeConfig.logo && themeConfig.logo.url)
 }
+
+export async function fetchArticleContent(slug: string): Promise<string> {
+  const url = `${CONTENT_BASE_URL}/articles/${slug}.md`
+  const response = await fetch(url, { cache: 'force-cache' })
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch article content: ${response.statusText}`)
+  }
+
+  // Return raw markdown string — no JSON parsing needed
+  return response.text()
+}

@@ -4,8 +4,8 @@
 import CategoryCard from '@/components/CategoryCard'
 import { fetchSiteConfig, fetchSiteContent, fetchThemeConfig, getCategoryLogoUrl } from '@/lib/s3'
 import { Category } from '@/lib/types'
-import Image from 'next/image'
 import Link from 'next/link'
+import { ArticleMeta } from '@/lib/types'
 
 export default async function HomePage() {
   const siteConfig = await fetchSiteConfig()
@@ -269,6 +269,94 @@ export default async function HomePage() {
         </>
       )}
       
+      {/* Featured Articles Section */}
+      {(() => {
+        const featuredArticles: ArticleMeta[] = (siteConfig.articles || [])
+          .filter(a => a.featured && a.status === 'published')
+          .sort((a, b) => a.featuredOrder - b.featuredOrder)
+          .slice(0, 3)
+
+        if (featuredArticles.length === 0) return null
+
+        return (
+          <div className="mt-20">
+            <div className="flex items-center justify-between mb-8">
+              <h2
+                className="text-3xl font-bold"
+                style={{
+                  color: 'var(--color-text-primary)',
+                  fontFamily: 'var(--font-heading)'
+                }}
+              >
+                Getting Started
+              </h2>
+              <Link
+                href="/blog"
+                className="text-sm font-semibold hover:underline"
+                style={{ color: 'var(--color-primary)' }}
+              >
+                View all guides →
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {featuredArticles.map(article => (
+                <Link
+                  key={article.articleId}
+                  href={`/blog/${article.articleSlug}`}
+                  className="group block p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  style={{ backgroundColor: 'var(--color-bg-primary)' }}
+                >
+                  {/* Tags */}
+                  {article.tags.length > 0 && (
+                    <div className="flex gap-2 mb-3">
+                      {article.tags.slice(0, 2).map(tag => (
+                        <span
+                          key={tag}
+                          className="px-2 py-1 rounded text-xs font-semibold capitalize"
+                          style={{
+                            backgroundColor: 'var(--color-bg-secondary)',
+                            color: 'var(--color-text-secondary)'
+                          }}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Title */}
+                  <h3
+                    className="text-lg font-bold mb-2 group-hover:underline leading-snug"
+                    style={{
+                      color: 'var(--color-text-primary)',
+                      fontFamily: 'var(--font-heading)'
+                    }}
+                  >
+                    {article.articleTitle}
+                  </h3>
+
+                  {/* Excerpt */}
+                  <p
+                    className="text-sm leading-relaxed mb-4"
+                    style={{ color: 'var(--color-text-secondary)' }}
+                  >
+                    {article.excerpt}
+                  </p>
+
+                  <span
+                    className="text-sm font-semibold group-hover:underline"
+                    style={{ color: 'var(--color-primary)' }}
+                  >
+                    Read guide →
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )
+      })()}
+
       {/* About Section (Optional - only if you want to show it on homepage) */}
       {about && about.content && (
         <div 
