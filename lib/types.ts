@@ -437,6 +437,8 @@ export interface ArticleMeta {
   articleId: string
   articleSlug: string
   articleTitle: string
+  articlePrompt: string
+  articleContentType: string
   excerpt: string
   metaDescription: string
   publishedDate: string
@@ -445,7 +447,7 @@ export interface ArticleMeta {
   featuredOrder: number
   status: string
   tags: string[]
-  featuredImagePrompt?: string
+  imagePrompt: string
   relatedPages: string[]
 }
 

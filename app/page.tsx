@@ -2,17 +2,16 @@
 // FILE: app/page.tsx - FULLY DYNAMIC VERSION
 // ============================================================================
 import CategoryCard from '@/components/CategoryCard'
-import { fetchSiteConfig, fetchSiteContent, fetchThemeConfig, getCategoryLogoUrl } from '@/lib/s3'
-import { Category } from '@/lib/types'
+import { fetchSiteConfig, fetchSiteContent, fetchThemeConfig, getCategoryLogoUrl, getArticleImageUrl } from '@/lib/s3'
+import { Category, ArticleMeta } from '@/lib/types'
 import Link from 'next/link'
-import { ArticleMeta } from '@/lib/types'
+import Image from 'next/image'
 
 export default async function HomePage() {
   const siteConfig = await fetchSiteConfig()
   const themeConfig = await fetchThemeConfig()
   const siteContent = await fetchSiteContent()
   
-  // Extract stats
   const stats = siteConfig.stats || {
     totalItemsAnalyzed: 0,
     totalItemsFeatured: 0,
@@ -20,19 +19,14 @@ export default async function HomePage() {
     totalCategories: 0
   }
   
-  // Calculate selectivity
   const selectivityRate = stats.totalItemsAnalyzed > 0
     ? ((stats.totalItemsFeatured / stats.totalItemsAnalyzed) * 100).toFixed(1)
     : 0
   
-  // Extract DESIGN settings from theme-config
   const { components } = themeConfig
   const { hero: heroTheme, trustBadges, categoriesSection } = components
-  
-  // Extract CONTENT from site-content
   const { hero: heroContent, trustIndicators, about } = siteContent
   
-  // Hero layout classes based on theme
   const heroAlignmentClass = {
     centered: 'text-center',
     left: 'text-left',
@@ -44,6 +38,11 @@ export default async function HomePage() {
     left: 'max-w-4xl',
     right: 'max-w-4xl ml-auto'
   }[heroTheme.layout] || 'max-w-4xl mx-auto'
+
+  const featuredArticles: ArticleMeta[] = (siteConfig.articles || [])
+    .filter(a => a.featured && a.status === 'published')
+    .sort((a, b) => a.featuredOrder - b.featuredOrder)
+    .slice(0, 3)
   
   return (
     <div 
@@ -64,10 +63,9 @@ export default async function HomePage() {
         }}
       >
         <div className={heroAlignmentClass}>
-          {/* Badge */}
           {heroTheme.badge.enabled && (
             <div 
-              className={`inline-block px-4 py-2 rounded-full text-sm font-semibold mb-4`}
+              className="inline-block px-4 py-2 rounded-full text-sm font-semibold mb-4"
               style={{
                 backgroundColor: `var(--color-${heroTheme.badge.style === 'blue' ? 'primary' : heroTheme.badge.style})`,
                 color: 'white',
@@ -78,7 +76,6 @@ export default async function HomePage() {
             </div>
           )}
           
-          {/* Headline */}
           <h1 
             className="text-5xl md:text-6xl font-black mb-6 leading-tight"
             style={{ 
@@ -88,7 +85,6 @@ export default async function HomePage() {
             dangerouslySetInnerHTML={{ __html: heroContent.headline }}
           />
           
-          {/* Subheadline */}
           <p 
             className="text-xl leading-relaxed mb-8"
             style={{ 
@@ -99,8 +95,6 @@ export default async function HomePage() {
           >
             {heroContent.subheadline}
           </p>
-          
-          {/* CTA Button */}
           <a
             href={heroContent.cta.url}
             className="inline-block px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg"
@@ -127,100 +121,63 @@ export default async function HomePage() {
           }}
         >
           {trustBadges.mode === 'auto' && stats.totalItemsAnalyzed > 0 ? (
-            // AUTO MODE: Show real stats from site-config.json
             <>
               <div className="text-center">
                 <div 
                   className="text-3xl font-bold mb-1"
-                  style={{ 
-                    color: 'var(--color-primary)',
-                    fontFamily: 'var(--font-heading)'
-                  }}
+                  style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-heading)' }}
                 >
                   {stats.totalItemsAnalyzed.toLocaleString()}+
                 </div>
-                <div 
-                  className="text-sm"
-                  style={{ color: 'var(--color-text-secondary)' }}
-                >
+                <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                   Items Analyzed
                 </div>
               </div>
-              
               <div className="text-center">
                 <div 
                   className="text-3xl font-bold mb-1"
-                  style={{ 
-                    color: 'var(--color-primary)',
-                    fontFamily: 'var(--font-heading)'
-                  }}
+                  style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-heading)' }}
                 >
                   {stats.totalItemsFeatured}
                 </div>
-                <div 
-                  className="text-sm"
-                  style={{ color: 'var(--color-text-secondary)' }}
-                >
+                <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                   Expert Picks
                 </div>
               </div>
-              
               <div className="text-center">
                 <div 
                   className="text-3xl font-bold mb-1"
-                  style={{ 
-                    color: 'var(--color-primary)',
-                    fontFamily: 'var(--font-heading)'
-                  }}
+                  style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-heading)' }}
                 >
                   Top {selectivityRate}%
                 </div>
-                <div 
-                  className="text-sm"
-                  style={{ color: 'var(--color-text-secondary)' }}
-                >
+                <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                   Selected
                 </div>
               </div>
             </>
           ) : trustBadges.mode === 'custom' && trustBadges.customBadges ? (
-            // CUSTOM MODE: Show custom badges from theme-config.json
             <>
               {trustBadges.customBadges.map((badge, index) => (
                 <div key={index} className="text-center">
                   <div 
                     className="text-3xl font-bold mb-1"
-                    style={{ 
-                      color: 'var(--color-primary)',
-                      fontFamily: 'var(--font-heading)'
-                    }}
+                    style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-heading)' }}
                   >
                     {badge.value}
                   </div>
-                  <div 
-                    className="text-sm"
-                    style={{ color: 'var(--color-text-secondary)' }}
-                  >
+                  <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                     {badge.label}
                   </div>
                 </div>
               ))}
             </>
           ) : (
-            // FALLBACK: Show trust indicators from site-content.json
             <>
               {trustIndicators.map((indicator, index) => (
                 <div key={index} className="flex items-center gap-2">
-                  <span 
-                    className="text-2xl"
-                    style={{ color: 'var(--color-primary)' }}
-                  >
-                    ✓
-                  </span>
-                  <span 
-                    className="text-sm font-semibold"
-                    style={{ color: 'var(--color-text-primary)' }}
-                  >
+                  <span className="text-2xl" style={{ color: 'var(--color-primary)' }}>✓</span>
+                  <span className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
                     {indicator}
                   </span>
                 </div>
@@ -235,10 +192,7 @@ export default async function HomePage() {
         <>
           <h2 
             className="text-3xl font-bold text-center mb-10"
-            style={{ 
-              color: 'var(--color-text-primary)',
-              fontFamily: 'var(--font-heading)'
-            }}
+            style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-heading)' }}
           >
             {siteContent.categoriesSection.title}
           </h2>
@@ -248,7 +202,7 @@ export default async function HomePage() {
             style={{
               display: 'grid',
               gridTemplateColumns: categoriesSection.layout === 'grid' 
-                ? `repeat(auto-fit, minmax(300px, 1fr))`
+                ? 'repeat(auto-fit, minmax(300px, 1fr))'
                 : '1fr',
               gap: categoriesSection.gap,
               maxWidth: '1024px'
@@ -258,7 +212,7 @@ export default async function HomePage() {
               <CategoryCard
                 key={category.categoryId}
                 category={category}
-                logoUrl={getCategoryLogoUrl(category.categoryId)}  // ✅ Call function here, pass result
+                logoUrl={getCategoryLogoUrl(category.categoryId)}
                 layout={categoriesSection.layout}
                 gap={categoriesSection.gap}
                 animationEnabled={themeConfig.animations?.enabled || false}
@@ -270,43 +224,46 @@ export default async function HomePage() {
       )}
       
       {/* Featured Articles Section */}
-      {(() => {
-        const featuredArticles: ArticleMeta[] = (siteConfig.articles || [])
-          .filter(a => a.featured && a.status === 'published')
-          .sort((a, b) => a.featuredOrder - b.featuredOrder)
-          .slice(0, 3)
+      {featuredArticles.length > 0 && (
+        <div className="mt-20">
+          <div className="flex items-center justify-between mb-8">
+            <h2
+              className="text-3xl font-bold"
+              style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-heading)' }}
+            >
+              Getting Started
+            </h2>
+            <Link
+              href="/blog"
+              className="text-sm font-semibold hover:underline"
+              style={{ color: 'var(--color-primary)' }}
+            >
+              View all guides →
+            </Link>
+          </div>
 
-        if (featuredArticles.length === 0) return null
-
-        return (
-          <div className="mt-20">
-            <div className="flex items-center justify-between mb-8">
-              <h2
-                className="text-3xl font-bold"
-                style={{
-                  color: 'var(--color-text-primary)',
-                  fontFamily: 'var(--font-heading)'
-                }}
-              >
-                Getting Started
-              </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {featuredArticles.map(article => (
               <Link
-                href="/blog"
-                className="text-sm font-semibold hover:underline"
-                style={{ color: 'var(--color-primary)' }}
+                key={article.articleId}
+                href={`/blog/${article.articleSlug}`}
+                className="group block rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                style={{ backgroundColor: 'var(--color-bg-primary)' }}
               >
-                View all guides →
-              </Link>
-            </div>
+                {/* Thumbnail */}
+                {article.imagePrompt && (
+                  <div className="aspect-video overflow-hidden">
+                    <Image
+                      src={getArticleImageUrl(article.articleSlug)}
+                      alt={article.articleTitle}
+                      width={600}
+                      height={338}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                )}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {featuredArticles.map(article => (
-                <Link
-                  key={article.articleId}
-                  href={`/blog/${article.articleSlug}`}
-                  className="group block p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                  style={{ backgroundColor: 'var(--color-bg-primary)' }}
-                >
+                <div className="p-6">
                   {/* Tags */}
                   {article.tags.length > 0 && (
                     <div className="flex gap-2 mb-3">
@@ -328,10 +285,7 @@ export default async function HomePage() {
                   {/* Title */}
                   <h3
                     className="text-lg font-bold mb-2 group-hover:underline leading-snug"
-                    style={{
-                      color: 'var(--color-text-primary)',
-                      fontFamily: 'var(--font-heading)'
-                    }}
+                    style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-heading)' }}
                   >
                     {article.articleTitle}
                   </h3>
@@ -350,14 +304,14 @@ export default async function HomePage() {
                   >
                     Read guide →
                   </span>
-                </Link>
-              ))}
-            </div>
+                </div>
+              </Link>
+            ))}
           </div>
-        )
-      })()}
+        </div>
+      )}
 
-      {/* About Section (Optional - only if you want to show it on homepage) */}
+      {/* About Section */}
       {about && about.content && (
         <div 
           className="mt-20 p-8 rounded-xl"
@@ -369,10 +323,7 @@ export default async function HomePage() {
         >
           <h2 
             className="text-3xl font-bold mb-6"
-            style={{ 
-              color: 'var(--color-text-primary)',
-              fontFamily: 'var(--font-heading)'
-            }}
+            style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-heading)' }}
           >
             {about.title}
           </h2>

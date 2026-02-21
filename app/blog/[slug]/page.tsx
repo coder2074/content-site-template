@@ -1,9 +1,10 @@
 // ============================================================================
 // FILE: app/blog/[slug]/page.tsx
 // ============================================================================
-import { fetchSiteConfig, fetchArticleContent } from '@/lib/s3'
+import { fetchSiteConfig, fetchArticleContent, getArticleImageUrl } from '@/lib/s3'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import type { Metadata } from 'next'
@@ -150,6 +151,20 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           {/* Divider */}
           <hr className="mt-8" style={{ borderColor: 'var(--color-bg-secondary)' }} />
         </header>
+
+        {/* Hero Image */}
+        {article.imagePrompt && (
+          <div className="mb-10 rounded-xl overflow-hidden">
+            <Image
+              src={getArticleImageUrl(article.articleSlug)}
+              alt={article.articleTitle}
+              width={896}
+              height={504}
+              className="w-full object-cover"
+              priority
+            />
+          </div>
+        )}
 
         {/* Article Content */}
         <article

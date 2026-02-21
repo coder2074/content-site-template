@@ -179,3 +179,7 @@ export async function fetchArticleContent(slug: string): Promise<string> {
   // Return raw markdown string — no JSON parsing needed
   return response.text()
 }
+
+export function getArticleImageUrl(articleSlug: string): string {
+  return `${CONTENT_BASE_URL}/articles/${articleSlug}-image.png`
+}

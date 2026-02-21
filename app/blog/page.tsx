@@ -1,9 +1,10 @@
 // ============================================================================
 // FILE: app/blog/page.tsx
 // ============================================================================
-import { fetchSiteConfig } from '@/lib/s3'
+import { fetchSiteConfig, getArticleImageUrl } from '@/lib/s3'
 import { ArticleMeta } from '@/lib/types'
 import Link from 'next/link'
+import Image from 'next/image'
 import type { Metadata } from 'next'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -22,7 +23,6 @@ export default async function BlogPage() {
       new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime()
     )
 
-  // Collect all unique tags across all articles
   const allTags = Array.from(
     new Set(allArticles.flatMap((a: ArticleMeta) => a.tags))
   ).sort()
@@ -48,7 +48,7 @@ export default async function BlogPage() {
         </p>
       </div>
 
-      {/* Tag Filter Row — links to static tag pages */}
+      {/* Tag Filter Row */}
       {allTags.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-10 justify-center">
           <span
@@ -101,7 +101,21 @@ function ArticleCard({ article }: { article: ArticleMeta }) {
       className="group block rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
       style={{ backgroundColor: 'var(--color-bg-primary)' }}
     >
+      {/* Thumbnail — only shown if image was generated */}
+      {article.imagePrompt && (
+        <div className="aspect-video overflow-hidden">
+          <Image
+            src={getArticleImageUrl(article.articleSlug)}
+            alt={article.articleTitle}
+            width={600}
+            height={338}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        </div>
+      )}
+
       <div className="p-6">
+        {/* Tags */}
         {article.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-3">
             {article.tags.slice(0, 2).map(tag => (
@@ -119,6 +133,7 @@ function ArticleCard({ article }: { article: ArticleMeta }) {
           </div>
         )}
 
+        {/* Title */}
         <h2
           className="text-xl font-bold mb-3 group-hover:underline leading-snug"
           style={{
@@ -129,6 +144,7 @@ function ArticleCard({ article }: { article: ArticleMeta }) {
           {article.articleTitle}
         </h2>
 
+        {/* Excerpt */}
         <p
           className="text-sm leading-relaxed mb-4"
           style={{ color: 'var(--color-text-secondary)' }}
@@ -136,6 +152,7 @@ function ArticleCard({ article }: { article: ArticleMeta }) {
           {article.excerpt}
         </p>
 
+        {/* Footer */}
         <div className="flex items-center justify-between">
           <span
             className="text-xs"
