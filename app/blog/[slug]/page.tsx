@@ -5,6 +5,7 @@ import { fetchSiteConfig, fetchArticleContent } from '@/lib/s3'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import type { Metadata } from 'next'
 import { ArticleMeta } from '@/lib/types'
 
@@ -14,12 +15,10 @@ interface ArticlePageProps {
 
 export async function generateStaticParams() {
   console.log('=== generateStaticParams /blog/[slug] called ===')
-  
+
   const siteConfig = await fetchSiteConfig()
   const articles = siteConfig.articles || []
 
-  // output: export requires at least one static param
-  // return a placeholder when no articles exist yet
   if (articles.length === 0) {
     return [{ slug: '_placeholder' }]
   }
@@ -50,18 +49,14 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params
 
-  // Handle placeholder slug used during static build
-  // when no articles exist yet
   if (slug === '_placeholder') notFound()
 
-  // 1. Get article metadata from site-config
   const siteConfig = await fetchSiteConfig()
   const article: ArticleMeta | undefined = (siteConfig.articles || [])
     .find(a => a.articleSlug === slug && a.status === 'published')
 
   if (!article) notFound()
 
-  // 2. Fetch markdown content from S3
   let markdownContent: string
   try {
     markdownContent = await fetchArticleContent(slug)
@@ -69,7 +64,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound()
   }
 
-  // 3. Get related pages for the "Related Picks" section
   const relatedPages = article.relatedPages
     .map(pageId => {
       for (const category of siteConfig.categories) {
@@ -80,7 +74,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     })
     .filter(Boolean) as Array<{ page: any; category: any }>
 
-  // 4. Get other featured articles for "More Articles" section
   const moreArticles = (siteConfig.articles || [])
     .filter(a => a.status === 'published' && a.articleSlug !== slug)
     .slice(0, 3)
@@ -113,7 +106,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               {article.tags.map(tag => (
                 <Link
                   key={tag}
-                  href={`/blog?tag=${tag}`}
+                  href={`/blog/tag/${tag}`}
                   className="px-3 py-1 rounded-full text-xs font-semibold capitalize hover:opacity-80 transition"
                   style={{
                     backgroundColor: 'var(--color-bg-primary)',
@@ -153,17 +146,51 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               })}</>
             )}
           </p>
+
+          {/* Divider */}
+          <hr className="mt-8" style={{ borderColor: 'var(--color-bg-secondary)' }} />
         </header>
 
-        {/* Article Content — Markdown rendered */}
+        {/* Article Content */}
         <article
-          className="prose prose-lg max-w-none mb-16"
-          style={{ color: 'var(--color-text-primary)' }}
+          className="
+            prose prose-lg max-w-none mb-16
+            prose-headings:font-bold
+            prose-h2:text-3xl prose-h2:mt-10 prose-h2:mb-4
+            prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
+            prose-h4:text-lg prose-h4:mt-6 prose-h4:mb-2
+            prose-p:leading-relaxed prose-p:mb-4
+            prose-li:leading-relaxed
+            prose-ul:my-4 prose-ul:list-disc prose-ul:pl-6
+            prose-ol:my-4 prose-ol:list-decimal prose-ol:pl-6
+            prose-strong:font-semibold
+            prose-blockquote:border-l-4 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:my-6
+            prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono
+            prose-pre:rounded-xl prose-pre:p-4 prose-pre:overflow-x-auto
+            prose-table:w-full prose-table:border-collapse prose-table:my-6
+            prose-th:p-3 prose-th:text-left prose-th:font-semibold prose-th:border
+            prose-td:p-3 prose-td:border
+            prose-img:rounded-xl prose-img:my-8
+            prose-a:underline prose-a:font-medium hover:prose-a:opacity-80
+          "
+          style={{
+            color: 'var(--color-text-primary)',
+            '--tw-prose-headings': 'var(--color-text-primary)',
+            '--tw-prose-links': 'var(--color-primary)',
+            '--tw-prose-bold': 'var(--color-text-primary)',
+            '--tw-prose-code': 'var(--color-text-primary)',
+            '--tw-prose-code-bg': 'var(--color-bg-secondary)',
+            '--tw-prose-th-borders': 'var(--color-bg-secondary)',
+            '--tw-prose-td-borders': 'var(--color-bg-secondary)',
+            '--tw-prose-quote-borders': 'var(--color-primary)',
+          } as React.CSSProperties}
         >
-          <ReactMarkdown>{markdownContent}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {markdownContent}
+          </ReactMarkdown>
         </article>
 
-        {/* Related Picks — affiliate pages linked from this article */}
+        {/* Related Picks */}
         {relatedPages.length > 0 && (
           <div
             className="mb-16 p-8 rounded-xl"
@@ -189,18 +216,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                     color: 'var(--color-text-primary)'
                   }}
                 >
-                  <span
-                    className="text-2xl"
-                    style={{ color: 'var(--color-primary)' }}
-                  >
+                  <span className="text-2xl" style={{ color: 'var(--color-primary)' }}>
                     →
                   </span>
                   <div>
                     <div className="font-semibold text-sm">{page.pageTitle}</div>
-                    <div
-                      className="text-xs"
-                      style={{ color: 'var(--color-text-secondary)' }}
-                    >
+                    <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
                       {category.categoryTitle}
                     </div>
                   </div>
@@ -231,23 +252,14 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                   style={{ backgroundColor: 'var(--color-bg-primary)' }}
                 >
                   <div className="flex-1">
-                    <div
-                      className="font-semibold mb-1"
-                      style={{ color: 'var(--color-text-primary)' }}
-                    >
+                    <div className="font-semibold mb-1" style={{ color: 'var(--color-text-primary)' }}>
                       {a.articleTitle}
                     </div>
-                    <div
-                      className="text-sm"
-                      style={{ color: 'var(--color-text-secondary)' }}
-                    >
+                    <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                       {a.excerpt}
                     </div>
                   </div>
-                  <span
-                    className="font-semibold text-sm shrink-0"
-                    style={{ color: 'var(--color-primary)' }}
-                  >
+                  <span className="font-semibold text-sm shrink-0" style={{ color: 'var(--color-primary)' }}>
                     Read →
                   </span>
                 </Link>
@@ -261,10 +273,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <Link
             href="/blog"
             className="inline-block px-8 py-3 rounded-lg font-semibold transition hover:opacity-90"
-            style={{
-              backgroundColor: 'var(--color-primary)',
-              color: 'white'
-            }}
+            style={{ backgroundColor: 'var(--color-primary)', color: 'white' }}
           >
             ← All Guides & Articles
           </Link>
