@@ -153,43 +153,32 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
         {/* Article Content */}
         <article
-          className="
-            prose prose-lg max-w-none mb-16
-            prose-headings:font-bold
-            prose-h2:text-3xl prose-h2:mt-10 prose-h2:mb-4
-            prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
-            prose-h4:text-lg prose-h4:mt-6 prose-h4:mb-2
-            prose-p:leading-relaxed prose-p:mb-4
-            prose-li:leading-relaxed
-            prose-ul:my-4 prose-ul:list-disc prose-ul:pl-6
-            prose-ol:my-4 prose-ol:list-decimal prose-ol:pl-6
-            prose-strong:font-semibold
-            prose-blockquote:border-l-4 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:my-6
-            prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono
-            prose-pre:rounded-xl prose-pre:p-4 prose-pre:overflow-x-auto
-            prose-table:w-full prose-table:border-collapse prose-table:my-6
-            prose-th:p-3 prose-th:text-left prose-th:font-semibold prose-th:border
-            prose-td:p-3 prose-td:border
-            prose-img:rounded-xl prose-img:my-8
-            prose-a:underline prose-a:font-medium hover:prose-a:opacity-80
-          "
-          style={{
-            color: 'var(--color-text-primary)',
-            '--tw-prose-headings': 'var(--color-text-primary)',
-            '--tw-prose-links': 'var(--color-primary)',
-            '--tw-prose-bold': 'var(--color-text-primary)',
-            '--tw-prose-code': 'var(--color-text-primary)',
-            '--tw-prose-code-bg': 'var(--color-bg-secondary)',
-            '--tw-prose-th-borders': 'var(--color-bg-secondary)',
-            '--tw-prose-td-borders': 'var(--color-bg-secondary)',
-            '--tw-prose-quote-borders': 'var(--color-primary)',
-          } as React.CSSProperties}
-        >
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {markdownContent}
-          </ReactMarkdown>
+            className="
+                prose prose-lg max-w-none mb-16
+                prose-headings:font-bold
+                prose-h2:text-3xl prose-h2:mt-10 prose-h2:mb-4
+                prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
+                prose-h4:text-lg prose-h4:mt-6 prose-h4:mb-2
+                prose-p:leading-relaxed prose-p:mb-4
+                prose-li:leading-relaxed
+                prose-ul:my-4 prose-ul:list-disc prose-ul:pl-6
+                prose-ol:my-4 prose-ol:list-decimal prose-ol:pl-6
+                prose-strong:font-semibold
+                prose-blockquote:border-l-4 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:my-6
+                prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono
+                prose-pre:rounded-xl prose-pre:p-4 prose-pre:overflow-x-auto
+                prose-table:w-full prose-table:border-collapse prose-table:my-6
+                prose-th:p-3 prose-th:text-left prose-th:font-semibold prose-th:border
+                prose-td:p-3 prose-td:border
+                prose-img:rounded-xl prose-img:my-8
+                prose-a:underline prose-a:font-medium hover:prose-a:opacity-80
+            "
+            style={{ color: 'var(--color-text-primary)' }}
+            >
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {markdownContent}
+            </ReactMarkdown>
         </article>
-
         {/* Related Picks */}
         {relatedPages.length > 0 && (
           <div
