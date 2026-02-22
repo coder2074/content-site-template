@@ -5,7 +5,6 @@ import CategoryCard from '@/components/CategoryCard'
 import { fetchSiteConfig, fetchSiteContent, fetchThemeConfig, getCategoryLogoUrl, getArticleImageUrl } from '@/lib/s3'
 import { Category, ArticleMeta } from '@/lib/types'
 import Link from 'next/link'
-import Image from 'next/image'
 import ArticleCard from '@/components/ArticleCard'
 
 export default async function HomePage() {
