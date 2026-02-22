@@ -7,7 +7,7 @@ import { useState } from 'react'
 
 interface CategoryCardProps {
   category: Category
-  logoUrl: string  // ✅ Changed from function to string
+  logoUrl: string
   layout: 'grid' | 'list'
   gap: string
   animationEnabled: boolean
@@ -16,7 +16,7 @@ interface CategoryCardProps {
 
 export default function CategoryCard({ 
   category, 
-  logoUrl,  // ✅ Just the URL string
+  logoUrl,
   layout,
   gap,
   animationEnabled,
@@ -27,7 +27,7 @@ export default function CategoryCard({
   return (
     <Link
       href={`/${category.categoryId}`}
-      className="group rounded-xl shadow-md p-6 border flex items-center justify-between"
+      className="group rounded-xl shadow-md border overflow-hidden flex flex-col"
       style={{
         backgroundColor: 'var(--color-bg-primary)',
         borderColor: isHovered ? 'var(--color-primary)' : 'var(--color-bg-secondary)',
@@ -40,7 +40,22 @@ export default function CategoryCard({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="flex-1">
+      {/* Full-width image at top */}
+      <div className="aspect-video overflow-hidden">
+        <Image
+          src={logoUrl}
+          alt={category.categoryTitle}
+          width={600}
+          height={338}
+          className="w-full h-full object-cover transition-transform duration-300"
+          style={{
+            transform: isHovered ? 'scale(1.05)' : 'scale(1)'
+          }}
+        />
+      </div>
+
+      {/* Text content below */}
+      <div className="p-6 flex-1">
         <h3 
           className="text-2xl font-bold mb-2 transition"
           style={{ 
@@ -57,23 +72,6 @@ export default function CategoryCard({
         >
           {category.pages.length} {category.pages.length === 1 ? 'page' : 'pages'} available
         </p>
-      </div>
-      
-      <div 
-        className="relative flex-shrink-0 ml-6"
-        style={{ 
-          width: '80px', 
-          height: '80px',
-          transform: isHovered ? 'scale(1.1)' : 'scale(1)',
-          transition: 'transform 300ms'
-        }}
-      >
-        <Image
-          src={logoUrl}  // ✅ Use the URL directly
-          alt={category.categoryTitle}
-          fill
-          className="object-contain"
-        />
       </div>
     </Link>
   )
