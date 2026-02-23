@@ -61,6 +61,7 @@ export interface Category {
   categoryId: string
   categoryTitle: string
   categorySlug?: string
+  iconPrompt?: string
   pages: PageMeta[]
   stats?: CategoryStats
 }
