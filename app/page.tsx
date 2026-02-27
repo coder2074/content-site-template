@@ -201,9 +201,9 @@ export default async function HomePage() {
             className="mx-auto"
             style={{
               display: 'grid',
-              gridTemplateColumns: categoriesSection.layout === 'grid' 
-                ? 'repeat(auto-fit, minmax(300px, 1fr))'
-                : '1fr',
+                gridTemplateColumns: categoriesSection.layout === 'grid' 
+                  ? 'repeat(auto-fill, minmax(300px, 320px))'
+                  : '1fr',
               gap: categoriesSection.gap,
               maxWidth: '1024px'
             }}

@@ -27,6 +27,11 @@ export async function generateStaticParams() {
     }
   }
   
+  // Next.js requires at least one param with output: export
+  if (params.length === 0) {
+    return [{ category: '_placeholder', page: '_placeholder' }]
+  }
+  
   return params
 }
 

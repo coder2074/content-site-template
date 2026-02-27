@@ -41,7 +41,7 @@ export default function CategoryCard({
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Full-width image at top */}
-      <div className="aspect-video overflow-hidden">
+      <div className="overflow-hidden" style={{ height: '200px' }}>
         <Image
           src={logoUrl}
           alt={category.categoryTitle}
