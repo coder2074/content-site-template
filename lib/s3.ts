@@ -1,7 +1,7 @@
 // ============================================================================
 // FILE: lib/s3.ts (UPDATED FOR STATIC EXPORT WITH FORCE-CACHE)
 // ============================================================================
-import { SiteConfig, PageContent, ThemeConfig, SiteContent } from './types'
+import { SiteConfig, PageContent, ThemeConfig, SiteContent, CategoryContent } from './types'
 import humps from 'humps'
 
 const CONTENT_BASE_URL = process.env.CONTENT_BASE_URL;
@@ -110,16 +110,15 @@ function getDefaultThemeConfig(): ThemeConfig {
   }
 }
 
-export async function fetchCategoryDescription(categoryId: string): Promise<string> {
+export async function fetchCategoryContent(categoryId: string): Promise<CategoryContent | null> {
   try {
-    const response = await fetch(
-      `${CONTENT_BASE_URL}/categories/${categoryId}/category-description.html`,
-      { cache: 'force-cache' }
-    )
-    if (!response.ok) return ''
-    return response.text()
+    const url = `${CONTENT_BASE_URL}/categories/${categoryId}/category-content.json`
+    const response = await fetch(url, { cache: 'force-cache' })
+    if (!response.ok) return null
+    const snakeCaseData = await response.json()
+    return humps.camelizeKeys(snakeCaseData) as CategoryContent
   } catch {
-    return ''
+    return null
   }
 }
 

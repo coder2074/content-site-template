@@ -1,13 +1,14 @@
 // ============================================================================
 // FILE: app/[category]/page.tsx
 // ============================================================================
-import { fetchSiteConfig, fetchCategoryDescription, getCategoryLogoUrl } from '@/lib/s3'
+import { fetchSiteConfig, fetchCategoryContent, getCategoryLogoUrl } from '@/lib/s3'
 import { PageMeta, calculateCategoryStats } from '@/lib/types'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { PROSE_CLASSES } from '@/lib/constants'
 import PageCard from '@/components/PageCard'
+import type { Metadata } from 'next'
 
 interface CategoryPageProps {
   params: Promise<{ category: string }>
@@ -20,6 +21,21 @@ export async function generateStaticParams() {
   }))
 }
 
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+  try {
+    const { category: categoryId } = await params
+    const categoryContent = await fetchCategoryContent(categoryId)
+    if (!categoryContent) return {}
+    return {
+      title: categoryContent.categoryTitle,
+      description: categoryContent.metaDescription,
+      keywords: categoryContent.seoKeywords?.join(', '),
+    }
+  } catch {
+    return {}
+  }
+}
+
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { category: categoryId } = await params
   const siteConfig = await fetchSiteConfig()
@@ -27,7 +43,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   if (!category) notFound()
 
-  const description = await fetchCategoryDescription(categoryId)
+  const categoryContent = await fetchCategoryContent(categoryId)
   const stats = calculateCategoryStats(category)
 
   const categorySelectivity = stats.totalAnalyzed > 0
@@ -121,24 +137,34 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       )}
 
       {/* Category Description */}
-      {description && (
+      {categoryContent?.categoryDescription && (
         <div
           className={`mb-16 ${PROSE_CLASSES}`}
-          dangerouslySetInnerHTML={{ __html: description }}
+          dangerouslySetInnerHTML={{ __html: categoryContent.categoryDescription }}
         />
       )}
 
       {/* Page Cards */}
       <h2 className="text-2xl font-semibold mb-6">Top Picks</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {category.pages.map((page: PageMeta) => (
-          <PageCard
-            key={page.pageId}
-            page={page}
-            categoryId={categoryId}
-          />
-        ))}
-      </div>
+      {category.pages.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {category.pages.map((page: PageMeta) => (
+            <PageCard
+              key={page.pageId}
+              page={page}
+              categoryId={categoryId}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-16 px-8 rounded-xl border-2 border-dashed border-gray-200">
+          <div className="text-4xl mb-4">🔍</div>
+          <h3 className="text-xl font-semibold text-gray-700 mb-2">Guides Coming Soon</h3>
+          <p className="text-gray-500 max-w-sm mx-auto">
+            We're currently researching and testing the best {category.categoryTitle.toLowerCase()} — check back soon for our expert picks.
+          </p>
+        </div>
+      )}
 
     </div>
   )

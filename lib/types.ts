@@ -66,6 +66,16 @@ export interface Category {
   stats?: CategoryStats
 }
 
+export interface CategoryContent {
+  schemaVersion: string
+  categoryId: string
+  categoryTitle: string
+  categoryDescription: string
+  metaDescription: string
+  seoKeywords: string[]
+  lastUpdated: string
+}
+
 export interface CategoryStats {
   totalProductsAnalyzed: number
   totalProductsFeatured: number
