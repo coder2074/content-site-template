@@ -5,6 +5,7 @@
 const nextConfig = {
   output: 'export',
   trailingSlash: true,
+  transpilePackages: ['react-leaflet'],
   images: {
     unoptimized: true,
     remotePatterns: [
