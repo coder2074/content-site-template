@@ -254,7 +254,7 @@ export interface AnimationsConfig {
 export interface CommerceContentTypeData {
   source: {
     merchant: string
-    merchantDisplay: string
+    merchantDisplay: string  // humps: merchant_display -> merchantDisplay
     url: string
     pricing: {
       display: string       // "$299.99" or "Free" or "$95/year"
@@ -342,7 +342,7 @@ export interface Item {
   }>
 
   // ---- Type-specific fields (commerce, place, person, etc.) ----
-  content_type_data: ContentTypeData
+  contentTypeData: ContentTypeData
 }
 
 // Keep Offer as an alias during migration — remove once all components updated
@@ -492,19 +492,19 @@ export function isPersonType(contentType: ContentType): boolean {
 // Safe accessors — return undefined gracefully if data not present
 
 export function getCommerce(item: Item): CommerceContentTypeData | undefined {
-  return item.content_type_data?.commerce
+  return item.contentTypeData?.commerce
 }
 
 export function getPlace(item: Item): PlaceContentTypeData | undefined {
-  return item.content_type_data?.place
+  return item.contentTypeData?.place
 }
 
 export function getPricing(item: Item): CommerceContentTypeData['source']['pricing'] | undefined {
-  return item.content_type_data?.commerce?.source?.pricing
+  return item.contentTypeData?.commerce?.source?.pricing
 }
 
 export function getLocation(item: Item): PlaceContentTypeData['location'] | undefined {
-  return item.content_type_data?.place?.location
+  return item.contentTypeData?.place?.location
 }
 
 // ============================================================================
