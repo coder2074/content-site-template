@@ -30,7 +30,11 @@ export default function BasePage({
   headerSlot,
   footerSlot,
 }: BasePageProps) {
-  const stats = formatPageStats(pageMeta)
+  const stats = formatPageStats({
+    ...pageMeta,
+    itemsAnalyzed: pageMeta.itemsAnalyzed ?? (pageMeta as any).items_analyzed ?? 0,
+    itemsFeatured: pageMeta.itemsFeatured ?? (pageMeta as any).items_featured ?? 0,
+  })
   const isCommerce = ['physical_product', 'service_offer'].includes(pageContent.pageContentType)
 
   return (
@@ -99,7 +103,7 @@ export default function BasePage({
             {stats.itemsAnalyzed > 0 && (
               <div className="bg-white rounded-lg p-4 text-center">
                 <div className="text-3xl font-bold text-red-600 mb-1">
-                  {(100 - stats.selectivity).toFixed(1)}%
+                  {((100 - (stats.selectivity || 0)) || 0).toFixed(1)}%
                 </div>
                 <div className="text-sm text-gray-600 mb-2">Filtered Out</div>
                 <div className="text-xs text-gray-500">Only the best made our list</div>

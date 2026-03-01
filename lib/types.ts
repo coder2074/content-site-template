@@ -116,7 +116,7 @@ export interface PageMeta {
 export interface PageMetadata {
   avgRating?: number
   totalReviews?: number
-  priceRange?: {
+  priceRange?: string | {
     min: number
     max: number
     currency: string
@@ -534,21 +534,22 @@ export interface ArticleMeta {
 // ============================================================================
 
 export function calculateSelectivity(featured: number, analyzed: number): number {
-  if (analyzed === 0) return 0
+  if (!analyzed || analyzed === 0 || !featured) return 0
   return parseFloat(((featured / analyzed) * 100).toFixed(1))
 }
 
 export function calculateRejectionRate(featured: number, analyzed: number): number {
-  return parseFloat((100 - calculateSelectivity(featured, analyzed)).toFixed(1))
+  const selectivity = calculateSelectivity(featured, analyzed)
+  return parseFloat((100 - selectivity).toFixed(1))
 }
 
 export function formatPageStats(page: PageMeta) {
   const stats = {
-    itemsAnalyzed: page.itemsAnalyzed || 0,
-    itemsFeatured: page.itemsFeatured || 0,
+    itemsAnalyzed: page.itemsAnalyzed || (page as any).items_analyzed || 0,
+    itemsFeatured: page.itemsFeatured || (page as any).items_featured || 0,
     selectivity: calculateSelectivity(
-      page.itemsFeatured || 0,
-      page.itemsAnalyzed || 0
+      page.itemsFeatured || (page as any).items_featured || 0,
+      page.itemsAnalyzed || (page as any).items_analyzed || 0
     ),
   }
 
@@ -565,9 +566,11 @@ export function formatPageStats(page: PageMeta) {
       ? `${metadata.totalReviews.toLocaleString()}+ verified reviews`
       : null,
     priceDisplay: metadata.priceRange
-      ? `$${metadata.priceRange.min.toFixed(2)}-$${metadata.priceRange.max.toFixed(2)}`
+      ? typeof metadata.priceRange === 'string'
+        ? metadata.priceRange
+        : `$${metadata.priceRange.min?.toFixed(2) ?? "?"}-$${metadata.priceRange.max?.toFixed(2) ?? "?"}`
       : null,
-    ratingDisplay: metadata.avgRating ? `${metadata.avgRating.toFixed(1)}★ average` : null,
+    ratingDisplay: metadata.avgRating ? `${Number(metadata.avgRating).toFixed(1)}★ average` : null,
     diversityDisplay: metadata.diversityMetric
       ? `${metadata.diversityMetric.count} ${metadata.diversityMetric.label}`
       : null,
