@@ -1,3 +1,5 @@
+'use client'
+
 // components/pages/extensions/CommercePage.tsx
 import { PageContent, PageMeta, Category } from '@/lib/types'
 import BasePage from '../BasePage'

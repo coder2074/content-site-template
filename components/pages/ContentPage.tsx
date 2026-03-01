@@ -1,3 +1,5 @@
+'use client'
+
 // components/pages/ContentPage.tsx
 // Registry: maps content type → page component.
 // This is the ONLY file that knows which page layout to use for which content type.

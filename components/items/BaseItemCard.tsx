@@ -1,3 +1,5 @@
+'use client'
+
 // components/items/BaseItemCard.tsx
 // Renders universal schema fields only.
 // Extended by content-type-specific cards via the `children` slot.

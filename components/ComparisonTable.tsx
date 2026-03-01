@@ -1,9 +1,9 @@
-// ============================================================================
-// FILE: components/ComparisonTable.tsx - UPDATED
-// ============================================================================
-import { Offer } from '@/lib/types'
+'use client'
 
-export default function ComparisonTable({ offers }: { offers: Offer[] }) {
+// components/ComparisonTable.tsx
+import { Item, getPricing } from '@/lib/types'
+
+export default function ComparisonTable({ offers }: { offers: Item[] }) {
   return (
     <div className="overflow-x-auto bg-white rounded-lg shadow">
       <table className="w-full">
@@ -18,15 +18,10 @@ export default function ComparisonTable({ offers }: { offers: Offer[] }) {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
-          {offers.map((offer: Offer) => {
-            // ✅ Get primary CTA from array (first one)
-            const primaryCTA = offer.cta?.[0]
-            const ctaUrl = primaryCTA?.url || '#'
-            const ctaLabel = primaryCTA?.text || 'View Deal'
-            
-            // ✅ Handle both pricing formats
-            const priceDisplay = offer.pricing?.display || offer.pricing?.current || offer.price || '-'
-            
+          {offers.map((offer: Item) => {
+            const pricing = getPricing(offer)
+            const priceDisplay = pricing?.display || '-'
+
             return (
               <tr key={offer.rank} className="hover:bg-gray-50">
                 <td className="px-6 py-4">
@@ -42,7 +37,7 @@ export default function ComparisonTable({ offers }: { offers: Offer[] }) {
                 <td className="px-6 py-4">
                   <div className="font-semibold text-gray-900">{offer.name}</div>
                 </td>
-                <td className="px-6 py-4 text-gray-600">{offer.bestFor}</td>
+                <td className="px-6 py-4 text-gray-600">{offer.tagline}</td>
                 <td className="px-6 py-4 font-semibold text-gray-900">{priceDisplay}</td>
                 <td className="px-6 py-4">
                   {offer.rating && (
@@ -50,7 +45,7 @@ export default function ComparisonTable({ offers }: { offers: Offer[] }) {
                       <span className="text-yellow-500">★</span>
                       <span className="font-semibold">{offer.rating.value}</span>
                       <span className="text-gray-500 text-sm">
-                        {offer.rating.scale ? `/ ${offer.rating.scale}` : 
+                        {offer.rating.scale ? `/ ${offer.rating.scale}` :
                          offer.rating.count ? `(${offer.rating.count.toLocaleString()})` : ''}
                       </span>
                     </div>

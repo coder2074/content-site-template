@@ -1,3 +1,5 @@
+'use client'
+
 // components/items/ItemCard.tsx
 // Registry: maps content type → card component.
 // This is the ONLY file that knows which card to use for which content type.

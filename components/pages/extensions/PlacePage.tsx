@@ -1,10 +1,10 @@
+'use client'
+
 // components/pages/extensions/PlacePage.tsx
-// Leaflet must be loaded client-side only (no SSR) — uses dynamic import.
 import { PageContent, PageMeta, Category } from '@/lib/types'
 import BasePage from '../BasePage'
 import dynamic from 'next/dynamic'
 
-// Dynamic import prevents SSR issues with Leaflet's window references
 const LocationMap = dynamic(() => import('@/components/LocationMap'), {
   ssr: false,
   loading: () => (
@@ -32,10 +32,7 @@ export default function PlacePage({
   const footerSlot = locationMap?.places && locationMap.places.length > 0 ? (
     <div className="mb-16">
       <h2 className="text-3xl font-bold mb-6">📍 All Locations</h2>
-      <LocationMap
-        center={locationMap.center}
-        places={locationMap.places}
-      />
+      <LocationMap center={locationMap.center} places={locationMap.places} />
     </div>
   ) : null
 

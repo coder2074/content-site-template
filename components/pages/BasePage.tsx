@@ -1,3 +1,5 @@
+'use client'
+
 // components/pages/BasePage.tsx
 // Renders the universal page structure shared by all content types:
 // breadcrumbs, header, research stats, intro, items list, FAQ, related content.
