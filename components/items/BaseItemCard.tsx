@@ -1,9 +1,6 @@
 'use client'
 
 // components/items/BaseItemCard.tsx
-// Renders universal schema fields only.
-// Extended by content-type-specific cards via the `children` slot.
-
 import { Item } from '@/lib/types'
 import MediaBlock from './shared/MediaBlock'
 import RatingBadge from './shared/RatingBadge'
@@ -13,11 +10,8 @@ import CTAButtons from './shared/CTAButtons'
 
 export interface BaseItemCardProps {
   item: Item
-  // Header accent color — each content type can pass its own
   accentColor?: string
-  // Label for attributes section — content types can override
   attributesLabel?: string
-  // Slot for content-type-specific content rendered after highlights/attributes
   children?: React.ReactNode
 }
 
@@ -50,35 +44,26 @@ export default function BaseItemCard({
       </div>
 
       <div className="p-6">
-        {/* Media */}
         <MediaBlock media={item.media} name={item.name} />
 
-        {/* Summary */}
         {item.summary && (
           <p className="text-gray-700 mb-6 text-lg leading-relaxed">{item.summary}</p>
         )}
 
-        {/* Rating */}
         <RatingBadge rating={item.rating} />
-
-        {/* Highlights — universal in v2.0 */}
         <Highlights highlights={item.highlights} />
-
-        {/* Attributes — universal key/value facts */}
         <Attributes attributes={item.attributes} label={attributesLabel} />
 
-        {/* Slot: content-type-specific sections injected here */}
+        {/* Slot for type-specific content */}
         {children}
 
-        {/* Description HTML — universal */}
-        {item.descriptionHtml && (
+        {item.description_html && (
           <div
             className="prose prose-sm max-w-none mb-6 text-gray-700"
-            dangerouslySetInnerHTML={{ __html: item.descriptionHtml }}
+            dangerouslySetInnerHTML={{ __html: item.description_html }}
           />
         )}
 
-        {/* CTAs */}
         <CTAButtons cta={item.cta} />
       </div>
     </div>

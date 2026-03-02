@@ -52,7 +52,7 @@ export default async function TagPage({ params }: TagPageProps) {
   const allArticles: ArticleMeta[] = (siteConfig.articles || [])
     .filter((a: ArticleMeta) => a.status === 'published')
     .sort((a: ArticleMeta, b: ArticleMeta) =>
-      new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime()
+      new Date(b.published_date).getTime() - new Date(a.published_date).getTime()
     )
 
   // Filter by this tag
@@ -127,7 +127,7 @@ export default async function TagPage({ params }: TagPageProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {taggedArticles.map(article => (
           <ArticleCard
-            key={article.articleId}
+            key={article.article_id}
             article={article}
             activeTag={tag}
           />

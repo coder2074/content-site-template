@@ -27,7 +27,7 @@ export default function PlacePage({
   category,
   categoryId,
 }: PlacePageProps) {
-  const locationMap = pageContent.additionalSections?.locationMap
+  const locationMap = pageContent.additional_sections?.location_map
 
   const footerSlot = locationMap?.places && locationMap.places.length > 0 ? (
     <div className="mb-16">

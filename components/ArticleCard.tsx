@@ -14,16 +14,16 @@ interface ArticleCardProps {
 export default function ArticleCard({ article, activeTag }: ArticleCardProps) {
   return (
     <Link
-      href={`/blog/${article.articleSlug}`}
+      href={`/blog/${article.article_slug}`}
       className="group block rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
       style={{ backgroundColor: 'var(--color-bg-primary)' }}
     >
       {/* Thumbnail */}
-      {article.imagePrompt && (
+      {article.image_prompt && (
         <div className="aspect-video overflow-hidden">
           <Image
-            src={getArticleImageUrl(article.articleSlug)}
-            alt={article.articleTitle}
+            src={getArticleImageUrl(article.article_slug)}
+            alt={article.article_title}
             width={600}
             height={338}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -62,7 +62,7 @@ export default function ArticleCard({ article, activeTag }: ArticleCardProps) {
             fontFamily: 'var(--font-heading)'
           }}
         >
-          {article.articleTitle}
+          {article.article_title}
         </h2>
 
         {/* Excerpt */}
@@ -79,7 +79,7 @@ export default function ArticleCard({ article, activeTag }: ArticleCardProps) {
             className="text-xs"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            {new Date(article.publishedDate).toLocaleDateString('en-US', {
+            {new Date(article.published_date).toLocaleDateString('en-US', {
               month: 'long',
               day: 'numeric',
               year: 'numeric'

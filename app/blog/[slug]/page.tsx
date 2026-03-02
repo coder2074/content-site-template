@@ -1,6 +1,4 @@
-// ============================================================================
-// FILE: app/blog/[slug]/page.tsx
-// ============================================================================
+// app/blog/[slug]/page.tsx
 import { fetchSiteConfig, fetchArticleContent, getArticleImageUrl } from '@/lib/s3'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -16,30 +14,21 @@ interface ArticlePageProps {
 
 export async function generateStaticParams() {
   console.log('=== generateStaticParams /blog/[slug] called ===')
-
   const siteConfig = await fetchSiteConfig()
   const articles = siteConfig.articles || []
-
-  if (articles.length === 0) {
-    return [{ slug: '_placeholder' }]
-  }
-
-  return articles.map((article: ArticleMeta) => ({
-    slug: article.articleSlug,
-  }))
+  if (articles.length === 0) return [{ slug: '_placeholder' }]
+  return articles.map((article: ArticleMeta) => ({ slug: article.article_slug }))
 }
 
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   try {
     const { slug } = await params
     const siteConfig = await fetchSiteConfig()
-    const article = (siteConfig.articles || []).find(a => a.articleSlug === slug)
-
+    const article = (siteConfig.articles || []).find(a => a.article_slug === slug)
     if (!article) return {}
-
     return {
-      title: article.articleTitle,
-      description: article.metaDescription,
+      title: article.article_title,
+      description: article.meta_description,
       keywords: article.tags.join(', '),
     }
   } catch {
@@ -49,12 +38,11 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params
-
   if (slug === '_placeholder') notFound()
 
   const siteConfig = await fetchSiteConfig()
   const article: ArticleMeta | undefined = (siteConfig.articles || [])
-    .find(a => a.articleSlug === slug && a.status === 'published')
+    .find(a => a.article_slug === slug && a.status === 'published')
 
   if (!article) notFound()
 
@@ -65,10 +53,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound()
   }
 
-  const relatedPages = article.relatedPages
+  const relatedPages = article.related_pages
     .map(pageId => {
       for (const category of siteConfig.categories) {
-        const page = category.pages.find(p => p.pageId === pageId)
+        const page = category.pages.find(p => p.page_id === pageId)
         if (page) return { page, category }
       }
       return null
@@ -76,32 +64,21 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     .filter(Boolean) as Array<{ page: any; category: any }>
 
   const moreArticles = (siteConfig.articles || [])
-    .filter(a => a.status === 'published' && a.articleSlug !== slug)
+    .filter(a => a.status === 'published' && a.article_slug !== slug)
     .slice(0, 3)
 
   return (
-    <div
-      className="mx-auto px-4 py-12"
-      style={{ maxWidth: 'var(--layout-max-width)' }}
-    >
+    <div className="mx-auto px-4 py-12" style={{ maxWidth: 'var(--layout-max-width)' }}>
       <div className="max-w-3xl mx-auto">
-
-        {/* Breadcrumb */}
         <nav className="text-sm mb-8" style={{ color: 'var(--color-text-secondary)' }}>
-          <Link href="/" className="hover:underline" style={{ color: 'var(--color-primary)' }}>
-            Home
-          </Link>
+          <Link href="/" className="hover:underline" style={{ color: 'var(--color-primary)' }}>Home</Link>
           {' > '}
-          <Link href="/blog" className="hover:underline" style={{ color: 'var(--color-primary)' }}>
-            Guides & Articles
-          </Link>
+          <Link href="/blog" className="hover:underline" style={{ color: 'var(--color-primary)' }}>Guides & Articles</Link>
           {' > '}
-          <span>{article.articleTitle}</span>
+          <span>{article.article_title}</span>
         </nav>
 
-        {/* Article Header */}
         <header className="mb-10">
-          {/* Tags */}
           {article.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
               {article.tags.map(tag => (
@@ -109,55 +86,30 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                   key={tag}
                   href={`/blog/tag/${tag}`}
                   className="px-3 py-1 rounded-full text-xs font-semibold capitalize hover:opacity-80 transition"
-                  style={{
-                    backgroundColor: 'var(--color-bg-primary)',
-                    color: 'var(--color-text-secondary)',
-                    border: '1px solid var(--color-bg-secondary)'
-                  }}
+                  style={{ backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-bg-secondary)' }}
                 >
                   {tag}
                 </Link>
               ))}
             </div>
           )}
-
-          {/* Title */}
-          <h1
-            className="text-4xl md:text-5xl font-black mb-4 leading-tight"
-            style={{
-              color: 'var(--color-text-primary)',
-              fontFamily: 'var(--font-heading)'
-            }}
-          >
-            {article.articleTitle}
+          <h1 className="text-4xl md:text-5xl font-black mb-4 leading-tight" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-heading)' }}>
+            {article.article_title}
           </h1>
-
-          {/* Date */}
           <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-            Published {new Date(article.publishedDate).toLocaleDateString('en-US', {
-              month: 'long',
-              day: 'numeric',
-              year: 'numeric'
-            })}
-            {article.lastUpdated !== article.publishedDate && (
-              <> · Updated {new Date(article.lastUpdated).toLocaleDateString('en-US', {
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric'
-              })}</>
+            Published {new Date(article.published_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            {article.last_updated !== article.published_date && (
+              <> · Updated {new Date(article.last_updated).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</>
             )}
           </p>
-
-          {/* Divider */}
           <hr className="mt-8" style={{ borderColor: 'var(--color-bg-secondary)' }} />
         </header>
 
-        {/* Hero Image */}
-        {article.imagePrompt && (
+        {article.image_prompt && (
           <div className="mb-10 rounded-xl overflow-hidden">
             <Image
-              src={getArticleImageUrl(article.articleSlug)}
-              alt={article.articleTitle}
+              src={getArticleImageUrl(article.article_slug)}
+              alt={article.article_title}
               width={896}
               height={504}
               className="w-full object-cover"
@@ -166,68 +118,25 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </div>
         )}
 
-        {/* Article Content */}
-        <article
-            className="
-                prose prose-lg max-w-none mb-16
-                prose-headings:font-bold
-                prose-h2:text-3xl prose-h2:mt-10 prose-h2:mb-4
-                prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
-                prose-h4:text-lg prose-h4:mt-6 prose-h4:mb-2
-                prose-p:leading-relaxed prose-p:mb-4
-                prose-li:leading-relaxed
-                prose-ul:my-4 prose-ul:list-disc prose-ul:pl-6
-                prose-ol:my-4 prose-ol:list-decimal prose-ol:pl-6
-                prose-strong:font-semibold
-                prose-blockquote:border-l-4 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:my-6
-                prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono
-                prose-pre:rounded-xl prose-pre:p-4 prose-pre:overflow-x-auto
-                prose-table:w-full prose-table:border-collapse prose-table:my-6
-                prose-th:p-3 prose-th:text-left prose-th:font-semibold prose-th:border
-                prose-td:p-3 prose-td:border
-                prose-img:rounded-xl prose-img:my-8
-                prose-a:underline prose-a:font-medium hover:prose-a:opacity-80
-            "
-            style={{ color: 'var(--color-text-primary)' }}
-            >
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {markdownContent}
-            </ReactMarkdown>
+        <article className="prose prose-lg max-w-none mb-16 prose-headings:font-bold prose-h2:text-3xl prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3 prose-p:leading-relaxed prose-p:mb-4 prose-li:leading-relaxed prose-ul:my-4 prose-ul:list-disc prose-ul:pl-6 prose-ol:my-4 prose-ol:list-decimal prose-ol:pl-6 prose-strong:font-semibold prose-a:underline prose-a:font-medium hover:prose-a:opacity-80" style={{ color: 'var(--color-text-primary)' }}>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdownContent}</ReactMarkdown>
         </article>
-        {/* Related Picks */}
+
         {relatedPages.length > 0 && (
-          <div
-            className="mb-16 p-8 rounded-xl"
-            style={{ backgroundColor: 'var(--color-bg-primary)' }}
-          >
-            <h2
-              className="text-2xl font-bold mb-6"
-              style={{
-                color: 'var(--color-text-primary)',
-                fontFamily: 'var(--font-heading)'
-              }}
-            >
-              Our Top Picks
-            </h2>
+          <div className="mb-16 p-8 rounded-xl" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
+            <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--color-text-primary)' }}>Our Top Picks</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {relatedPages.map(({ page, category }) => (
                 <Link
-                  key={page.pageId}
-                  href={`/${category.categoryId}/${page.pageId}`}
+                  key={page.page_id}
+                  href={`/${category.category_id}/${page.page_id}`}
                   className="flex items-center gap-3 p-4 rounded-lg hover:shadow-md transition"
-                  style={{
-                    backgroundColor: 'var(--color-bg-secondary)',
-                    color: 'var(--color-text-primary)'
-                  }}
+                  style={{ backgroundColor: 'var(--color-bg-secondary)', color: 'var(--color-text-primary)' }}
                 >
-                  <span className="text-2xl" style={{ color: 'var(--color-primary)' }}>
-                    →
-                  </span>
+                  <span className="text-2xl" style={{ color: 'var(--color-primary)' }}>→</span>
                   <div>
-                    <div className="font-semibold text-sm">{page.pageTitle}</div>
-                    <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
-                      {category.categoryTitle}
-                    </div>
+                    <div className="font-semibold text-sm">{page.page_title}</div>
+                    <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{category.category_title}</div>
                   </div>
                 </Link>
               ))}
@@ -235,54 +144,33 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </div>
         )}
 
-        {/* More Articles */}
         {moreArticles.length > 0 && (
           <div className="mb-16">
-            <h2
-              className="text-2xl font-bold mb-6"
-              style={{
-                color: 'var(--color-text-primary)',
-                fontFamily: 'var(--font-heading)'
-              }}
-            >
-              More Guides
-            </h2>
+            <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--color-text-primary)' }}>More Guides</h2>
             <div className="space-y-4">
               {moreArticles.map(a => (
                 <Link
-                  key={a.articleId}
-                  href={`/blog/${a.articleSlug}`}
+                  key={a.article_id}
+                  href={`/blog/${a.article_slug}`}
                   className="flex items-center gap-4 p-4 rounded-lg hover:shadow-md transition"
                   style={{ backgroundColor: 'var(--color-bg-primary)' }}
                 >
                   <div className="flex-1">
-                    <div className="font-semibold mb-1" style={{ color: 'var(--color-text-primary)' }}>
-                      {a.articleTitle}
-                    </div>
-                    <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-                      {a.excerpt}
-                    </div>
+                    <div className="font-semibold mb-1" style={{ color: 'var(--color-text-primary)' }}>{a.article_title}</div>
+                    <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>{a.excerpt}</div>
                   </div>
-                  <span className="font-semibold text-sm shrink-0" style={{ color: 'var(--color-primary)' }}>
-                    Read →
-                  </span>
+                  <span className="font-semibold text-sm shrink-0" style={{ color: 'var(--color-primary)' }}>Read →</span>
                 </Link>
               ))}
             </div>
           </div>
         )}
 
-        {/* Back to all articles */}
         <div className="text-center">
-          <Link
-            href="/blog"
-            className="inline-block px-8 py-3 rounded-lg font-semibold transition hover:opacity-90"
-            style={{ backgroundColor: 'var(--color-primary)', color: 'white' }}
-          >
+          <Link href="/blog" className="inline-block px-8 py-3 rounded-lg font-semibold transition hover:opacity-90" style={{ backgroundColor: 'var(--color-primary)', color: 'white' }}>
             ← All Guides & Articles
           </Link>
         </div>
-
       </div>
     </div>
   )

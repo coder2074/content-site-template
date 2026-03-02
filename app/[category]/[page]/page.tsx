@@ -15,8 +15,8 @@ export async function generateStaticParams() {
   for (const category of siteConfig.categories) {
     for (const page of category.pages) {
       params.push({
-        category: category.categoryId,
-        page: page.pageId,
+        category: category.category_id,
+        page: page.page_id,
       })
     }
   }
@@ -33,9 +33,9 @@ export async function generateMetadata({ params }: AffiliatePageProps): Promise<
     const { category, page } = await params
     const content = await fetchPageContent(category, page)
     return {
-      title: content.pageTitle,
-      description: content.metaDescription || content.introduction,
-      keywords: content.seoKeywords?.join(', '),
+      title: content.page_title,
+      description: content.meta_description || content.introduction,
+      keywords: content.seo_keywords?.join(', '),
     }
   } catch {
     return {}
@@ -47,10 +47,10 @@ export default async function AffiliatePage({ params }: AffiliatePageProps) {
 
   const siteConfig = await fetchSiteConfig()
 
-  const category = siteConfig.categories.find((c) => c.categoryId === categoryId)
+  const category = siteConfig.categories.find((c) => c.category_id === categoryId)
   if (!category) notFound()
 
-  const pageMeta = category.pages.find((p) => p.pageId === pageId)
+  const pageMeta = category.pages.find((p) => p.page_id === pageId)
   if (!pageMeta) notFound()
 
   let pageContent
@@ -60,7 +60,6 @@ export default async function AffiliatePage({ params }: AffiliatePageProps) {
     notFound()
   }
 
-  // Delegate entirely to ContentPage — it knows what to render based on pageContentType
   return (
     <ContentPage
       pageContent={pageContent}

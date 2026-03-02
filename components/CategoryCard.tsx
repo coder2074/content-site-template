@@ -26,7 +26,7 @@ export default function CategoryCard({
   
   return (
     <Link
-      href={`/${category.categoryId}`}
+      href={`/${category.category_id}`}
       className="group rounded-xl shadow-md border overflow-hidden flex flex-col"
       style={{
         backgroundColor: 'var(--color-bg-primary)',
@@ -40,21 +40,16 @@ export default function CategoryCard({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Full-width image at top */}
       <div className="overflow-hidden" style={{ height: '200px' }}>
         <Image
           src={logoUrl}
-          alt={category.categoryTitle}
+          alt={category.category_title}
           width={600}
           height={338}
           className="w-full h-full object-cover transition-transform duration-300"
-          style={{
-            transform: isHovered ? 'scale(1.05)' : 'scale(1)'
-          }}
+          style={{ transform: isHovered ? 'scale(1.05)' : 'scale(1)' }}
         />
       </div>
-
-      {/* Text content below */}
       <div className="p-6 flex-1">
         <h3 
           className="text-2xl font-bold mb-2 transition"
@@ -64,12 +59,9 @@ export default function CategoryCard({
             transition: 'color 200ms'
           }}
         >
-          {category.categoryTitle}
+          {category.category_title}
         </h3>
-        <p 
-          className="text-sm"
-          style={{ color: 'var(--color-text-secondary)' }}
-        >
+        <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
           {category.pages.length} {category.pages.length === 1 ? 'page' : 'pages'} available
         </p>
       </div>
