@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     return {
       title: article.article_title,
       description: article.meta_description,
-      keywords: article.tags.join(', '),
+      keywords: article.tags?.join(', ') ?? '',
     }
   } catch {
     return {}

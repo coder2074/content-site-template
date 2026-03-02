@@ -8,9 +8,9 @@ import { LogoImage } from '@/components/LogoImage'
 export async function generateMetadata(): Promise<Metadata> {
   const siteContent = await fetchSiteContent()
   return {
-    title: siteContent.branding.site_name,
-    description: siteContent.meta_description,
-    keywords: siteContent.seo_keywords.join(', '),
+    title: siteContent.branding.siteName,
+    description: siteContent.metaDescription,
+    keywords: siteContent.seoKeywords?.join(', ') ?? '',
   }
 }
 
@@ -67,21 +67,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 {showLogo && logoConfig && (
                   <LogoImage
                     src={logoUrl}
-                    alt={siteContent.branding.site_name}
+                    alt={siteContent.branding.siteName}
                     width={logoConfig.width}
                     height={logoConfig.height}
                     className="object-contain"
                   />
                 )}
                 <div className="text-2xl md:text-3xl font-black tracking-tight group-hover:scale-105 transition">
-                  {siteContent.branding.site_name}
+                  {siteContent.branding.siteName}
                 </div>
               </Link>
               <Link href="/blog" className="hidden md:block text-sm font-semibold hover:opacity-80 transition" style={{ color: 'white' }}>
                 Guides
               </Link>
               <div className="hidden md:flex items-center gap-6 text-sm">
-                {siteContent.trust_indicators.slice(0, 2).map((indicator, index) => (
+                {siteContent.trustIndicators.slice(0, 2).map((indicator, index) => (
                   <span key={index} className="flex items-center gap-2">
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
@@ -108,13 +108,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <div className="mx-auto px-4" style={{ maxWidth: 'var(--layout-max-width)' }}>
             <div className="grid md:grid-cols-3 gap-8 mb-8">
               <div>
-                <h3 className="text-xl font-bold mb-3">{siteContent.branding.site_name}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{siteContent.footer.about_text}</p>
+                <h3 className="text-xl font-bold mb-3">{siteContent.branding.siteName}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{siteContent.footer.aboutText}</p>
               </div>
               <div>
                 <h4 className="font-semibold mb-3">Our Promise</h4>
                 <ul className="text-gray-400 text-sm space-y-2">
-                  {siteContent.trust_indicators.map((indicator, index) => (
+                  {siteContent.trustIndicators.map((indicator, index) => (
                     <li key={index} className="flex items-center gap-2">
                       <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>

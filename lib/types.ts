@@ -295,25 +295,25 @@ export interface RelatedPage {
 }
 
 export interface SiteContent {
-  schema_version: string
-  last_updated: string
-  branding: { site_name: string; tagline: string; description: string }
+  schemaVersion: string
+  lastUpdated: string
+  branding: { siteName: string; tagline: string; description: string }
   hero: {
     badge: { text: string }
     headline: string
     subheadline: string
     cta: { text: string; url: string }
   }
-  trust_indicators: string[]
-  categories_section: { title: string }
+  trustIndicators: string[]
+  categoriesSection: { title: string }
   about: { title: string; content: string }
   footer: {
-    about_text: string
+    aboutText: string
     copyright: string
     links: Array<{ text: string; url: string }>
   }
-  meta_description: string
-  seo_keywords: string[]
+  metaDescription: string
+  seoKeywords: string[]
 }
 
 // ============================================================================

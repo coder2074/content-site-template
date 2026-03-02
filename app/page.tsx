@@ -23,7 +23,7 @@ export default async function HomePage() {
 
   const { components } = themeConfig
   const { hero: heroTheme, trustBadges, categoriesSection } = components
-  const { hero: heroContent, trust_indicators, about } = siteContent
+  const { hero: heroContent, trustIndicators, about } = siteContent
 
   const layout = (heroTheme.layout || 'centered') as 'centered' | 'left' | 'right'
   const heroAlignmentClass = { centered: 'text-center', left: 'text-left', right: 'text-right' }[layout]
@@ -116,7 +116,7 @@ export default async function HomePage() {
             </>
           ) : (
             <>
-              {trust_indicators.map((indicator, index) => (
+              {trustIndicators.map((indicator, index) => (
                 <div key={index} className="flex items-center gap-2">
                   <span className="text-2xl" style={{ color: 'var(--color-primary)' }}>✓</span>
                   <span className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>{indicator}</span>
@@ -131,7 +131,7 @@ export default async function HomePage() {
       {categoriesSection.enabled && (
         <>
           <h2 className="text-3xl font-bold text-center mb-10" style={{ color: 'var(--color-text-primary)' }}>
-            {siteContent.categories_section.title}
+            {siteContent.categoriesSection.title}
           </h2>
           <div
             className="mx-auto"

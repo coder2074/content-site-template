@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
     return {
       title: categoryContent.category_title,
       description: categoryContent.meta_description,
-      keywords: categoryContent.seo_keywords?.join(', '),
+      keywords: categoryContent.seo_keywords?.join(', ') ?? '',
     }
   } catch {
     return {}

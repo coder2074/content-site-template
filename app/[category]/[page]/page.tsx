@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: AffiliatePageProps): Promise<
     return {
       title: content.page_title,
       description: content.meta_description || content.introduction,
-      keywords: content.seo_keywords?.join(', '),
+      keywords: content.seo_keywords?.join(', ') ?? '',
     }
   } catch {
     return {}
