@@ -4,6 +4,16 @@ import { fetchSiteConfig, fetchSiteContent, fetchThemeConfig, getCategoryLogoUrl
 import { Category, ArticleMeta } from '@/lib/types'
 import Link from 'next/link'
 import ArticleCard from '@/components/ArticleCard'
+import { Metadata } from 'next'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const siteContent = await fetchSiteContent()
+  return {
+    alternates: {
+      canonical: '/',
+    },
+  }
+}
 
 export default async function HomePage() {
   const siteConfig = await fetchSiteConfig()

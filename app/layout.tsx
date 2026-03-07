@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: {
       default: siteContent.branding.siteName,
-      template: `%s | ${siteContent.branding.siteName}`,  // ← page titles get site name appended
+      template: `%s | ${siteContent.branding.siteName}`,
     },
     description: siteContent.metaDescription,
     keywords: siteContent.seoKeywords?.join(', ') ?? '',
