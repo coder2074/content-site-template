@@ -11,7 +11,6 @@ export default function ComparisonTable({ offers }: { offers: Item[] }) {
           <tr>
             <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Rank</th>
             <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Product</th>
-            <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Best For</th>
             <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Price</th>
             <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Rating</th>
             <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Action</th>
@@ -37,7 +36,6 @@ export default function ComparisonTable({ offers }: { offers: Item[] }) {
                 <td className="px-6 py-4">
                   <div className="font-semibold text-gray-900">{offer.name}</div>
                 </td>
-                <td className="px-6 py-4 text-gray-600">{offer.tagline}</td>
                 <td className="px-6 py-4 font-semibold text-gray-900">{priceDisplay}</td>
                 <td className="px-6 py-4">
                   {offer.rating && (

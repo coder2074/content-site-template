@@ -32,10 +32,21 @@ export async function generateMetadata({ params }: AffiliatePageProps): Promise<
   try {
     const { category, page } = await params
     const content = await fetchPageContent(category, page)
+    const imageUrl = content.items?.[0]?.media?.images?.[0]?.url
+
     return {
-      title: content.page_title,
-      description: content.meta_description || content.introduction,
+      title: content.page_title,               // ← layout template appends site name
+      description: content.meta_description,
       keywords: content.seo_keywords?.join(', ') ?? '',
+      alternates: {
+        canonical: `/${category}/${page}`,    // ← canonical tag
+      },
+      openGraph: {
+        title: content.page_title,
+        description: content.meta_description,
+        type: 'article',
+        ...(imageUrl && { images: [{ url: imageUrl }] }),
+      },
     }
   } catch {
     return {}
@@ -60,12 +71,22 @@ export default async function AffiliatePage({ params }: AffiliatePageProps) {
     notFound()
   }
 
+  const jsonLd = pageContent.schema ?? null
+
   return (
-    <ContentPage
-      pageContent={pageContent}
-      pageMeta={pageMeta}
-      category={category}
-      categoryId={categoryId}
-    />
+    <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      <ContentPage
+        pageContent={pageContent}
+        pageMeta={pageMeta}
+        category={category}
+        categoryId={categoryId}
+      />
+    </>
   )
 }

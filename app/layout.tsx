@@ -8,9 +8,17 @@ import { LogoImage } from '@/components/LogoImage'
 export async function generateMetadata(): Promise<Metadata> {
   const siteContent = await fetchSiteContent()
   return {
-    title: siteContent.branding.siteName,
+    title: {
+      default: siteContent.branding.siteName,
+      template: `%s | ${siteContent.branding.siteName}`,  // ← page titles get site name appended
+    },
     description: siteContent.metaDescription,
     keywords: siteContent.seoKeywords?.join(', ') ?? '',
+    robots: 'index, follow',
+    openGraph: {
+      siteName: siteContent.branding.siteName,
+      type: 'website',
+    },
   }
 }
 
