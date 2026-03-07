@@ -7,6 +7,9 @@ import { LogoImage } from '@/components/LogoImage'
 
 export async function generateMetadata(): Promise<Metadata> {
   const siteContent = await fetchSiteContent()
+  const themeConfig = await fetchThemeConfig()
+  const logoUrl = themeConfig.logo?.url || getSiteHeaderLogoUrl(process.env.NEXT_PUBLIC_SITE_ID)
+
   return {
     title: {
       default: siteContent.branding.siteName,
@@ -18,6 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       siteName: siteContent.branding.siteName,
       type: 'website',
+      ...(logoUrl && { images: [{ url: logoUrl }] }),
     },
   }
 }

@@ -1,5 +1,5 @@
 // app/[category]/[page]/page.tsx
-import { fetchSiteConfig, fetchPageContent } from '@/lib/s3'
+import { fetchSiteConfig, fetchPageContent, fetchThemeConfig, getSiteHeaderLogoUrl } from '@/lib/s3'
 import { notFound } from 'next/navigation'
 import ContentPage from '@/components/pages/ContentPage'
 import type { Metadata } from 'next'
@@ -32,20 +32,24 @@ export async function generateMetadata({ params }: AffiliatePageProps): Promise<
   try {
     const { category, page } = await params
     const content = await fetchPageContent(category, page)
-    const imageUrl = content.items?.[0]?.media?.images?.[0]?.url
+    const themeConfig = await fetchThemeConfig()
+
+    const ogImage = content.items?.[0]?.media?.images?.[0]?.url
+      || themeConfig.logo?.url
+      || getSiteHeaderLogoUrl(process.env.NEXT_PUBLIC_SITE_ID)
 
     return {
-      title: content.page_title,               // ← layout template appends site name
+      title: content.page_title,
       description: content.meta_description,
       keywords: content.seo_keywords?.join(', ') ?? '',
       alternates: {
-        canonical: `/${category}/${page}`,    // ← canonical tag
+        canonical: `/${category}/${page}`,
       },
       openGraph: {
         title: content.page_title,
         description: content.meta_description,
         type: 'article',
-        ...(imageUrl && { images: [{ url: imageUrl }] }),
+        images: [{ url: ogImage }],
       },
     }
   } catch {

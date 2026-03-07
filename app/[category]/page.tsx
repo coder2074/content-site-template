@@ -24,6 +24,9 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
     const { category: categoryId } = await params
     const categoryContent = await fetchCategoryContent(categoryId)
     if (!categoryContent) return {}
+
+    const categoryImageUrl = `${process.env.CONTENT_BASE_URL}/categories/${categoryId}/category-logo-image.png`
+
     return {
       title: categoryContent.category_title,
       description: categoryContent.meta_description,
@@ -35,6 +38,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
         title: categoryContent.category_title,
         description: categoryContent.meta_description,
         type: 'website',
+        images: [{ url: categoryImageUrl }],
       },
     }
   } catch {
