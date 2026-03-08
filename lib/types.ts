@@ -22,6 +22,8 @@ export interface SiteConfig {
   categories: Category[]
   articles?: ArticleMeta[]
   stats?: SiteStats
+  custom_domain?: string
+  deployment_url?: string
 }
 
 export interface SiteStats {
