@@ -1,7 +1,7 @@
 'use client'
 
 // components/pages/extensions/CommercePage.tsx
-import { PageContent, PageMeta, Category } from '@/lib/types'
+import { PageContent, PageMeta, Category, ArticleMeta } from '@/lib/types'
 import BasePage from '../BasePage'
 import ComparisonTable from '@/components/ComparisonTable'
 import BuyerGuide from '@/components/BuyerGuide'
@@ -11,9 +11,11 @@ interface CommercePageProps {
   pageMeta: PageMeta
   category: Category
   categoryId: string
+  relatedArticles?: ArticleMeta[]
+  relatedPages?: Array<{ page: PageMeta; category: Category }>
 }
 
-export default function CommercePage({ pageContent, pageMeta, category, categoryId }: CommercePageProps) {
+export default function CommercePage({ pageContent, pageMeta, category, categoryId, relatedArticles, relatedPages }: CommercePageProps) {
   const headerSlot = pageContent.comparison_table?.enabled ? (
     <div className="mb-12">
       <h2 className="text-3xl font-bold mb-6">Quick Comparison</h2>
@@ -53,6 +55,8 @@ export default function CommercePage({ pageContent, pageMeta, category, category
       categoryId={categoryId}
       headerSlot={headerSlot}
       footerSlot={footerSlot}
+      relatedArticles={relatedArticles}
+      relatedPages={relatedPages}
     />
   )
 }

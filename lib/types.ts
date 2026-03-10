@@ -66,6 +66,8 @@ export interface PageMeta {
   items_featured?: number
   items_analyzed?: number
   last_updated?: string
+  tags?: string[]         
+  seo_keywords?: string[] 
   metadata?: PageMetadata
 }
 
@@ -274,10 +276,6 @@ export interface PageContent {
       places: Array<{ name: string; lat: number; lng: number; address?: string }>
     }
   }
-  related_content?: {
-    pages?: RelatedPage[]
-    tags?: string[]
-  }
 }
 
 export interface BuyerGuideSection {
@@ -288,12 +286,6 @@ export interface BuyerGuideSection {
 export interface FAQItem {
   question: string
   answer: string
-}
-
-export interface RelatedPage {
-  title: string
-  url: string
-  category: string
 }
 
 export interface SiteContent {
@@ -367,7 +359,6 @@ export interface ArticleMeta {
   status: string
   tags: string[]
   image_prompt: string
-  related_pages: string[]
 }
 
 // ============================================================================

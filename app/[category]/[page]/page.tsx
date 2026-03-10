@@ -75,6 +75,32 @@ export default async function AffiliatePage({ params }: AffiliatePageProps) {
     notFound()
   }
 
+  const pageTags = pageMeta.tags || []
+
+
+console.log('pageTags:', pageTags)
+console.log('all pages with tags:', siteConfig.categories.flatMap(cat =>
+  cat.pages.map(p => ({ page_id: p.page_id, tags: p.tags || [] }))
+))
+
+  const relatedArticles = pageTags.length > 0
+    ? (siteConfig.articles || []).filter(
+        a => a.status === 'published' &&
+        a.tags?.some((t: string) => pageTags.includes(t))
+      )
+    : []
+
+  const relatedPages = pageTags.length > 0
+    ? siteConfig.categories.flatMap(cat =>
+        cat.pages
+          .filter(p =>
+            p.page_id !== pageId &&
+            p.tags?.some((t: string) => pageTags.includes(t))
+          )
+          .map(p => ({ page: p, category: cat }))
+      )
+    : []
+  console.log('relatedPages found:', relatedPages.length)
   const jsonLd = pageContent.schema ?? null
 
   return (
@@ -90,6 +116,8 @@ export default async function AffiliatePage({ params }: AffiliatePageProps) {
         pageMeta={pageMeta}
         category={category}
         categoryId={categoryId}
+        relatedArticles={relatedArticles}
+        relatedPages={relatedPages}
       />
     </>
   )

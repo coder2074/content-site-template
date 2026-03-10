@@ -1,15 +1,18 @@
 'use client'
 
 // components/pages/BasePage.tsx
-import { PageContent, PageMeta, Category, ContentType, formatPageStats } from '@/lib/types'
+import { PageContent, PageMeta, Category, ContentType, formatPageStats, ArticleMeta } from '@/lib/types'
 import Link from 'next/link'
 import ItemCard from '@/components/items/ItemCard'
+import RelatedContent from '../RelatedContent'
 
 interface BasePageProps {
   pageContent: PageContent
   pageMeta: PageMeta
   category: Category
   categoryId: string
+  relatedArticles?: ArticleMeta[]
+  relatedPages?: Array<{ page: PageMeta; category: Category }>
   headerSlot?: React.ReactNode
   footerSlot?: React.ReactNode
 }
@@ -19,6 +22,8 @@ export default function BasePage({
   pageMeta,
   category,
   categoryId,
+  relatedArticles = [],
+  relatedPages = [],
   headerSlot,
   footerSlot,
 }: BasePageProps) {
@@ -119,24 +124,8 @@ export default function BasePage({
         </div>
       )}
 
-      {/* Related Content */}
-      {pageContent.related_content?.pages && pageContent.related_content.pages.length > 0 && (
-        <div className="mt-12">
-          <h2 className="text-2xl font-bold mb-6">Related Guides</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {pageContent.related_content.pages.map((related, idx) => (
-              <Link
-                key={idx}
-                href={related.url}
-                className="p-4 bg-white rounded-lg shadow hover:shadow-md transition flex items-center gap-3"
-              >
-                <span className="text-blue-600">→</span>
-                <span className="font-semibold text-sm">{related.title}</span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
+      <RelatedContent relatedArticles={relatedArticles} relatedPages={relatedPages} />
+
     </div>
   )
 }

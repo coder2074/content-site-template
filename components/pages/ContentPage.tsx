@@ -1,7 +1,7 @@
 'use client'
 
 // components/pages/ContentPage.tsx
-import { PageContent, PageMeta, Category, ContentType } from '@/lib/types'
+import { PageContent, PageMeta, Category, ContentType, ArticleMeta } from '@/lib/types'
 import CommercePage from './extensions/CommercePage'
 import PlacePage from './extensions/PlacePage'
 import BasePage from './BasePage'
@@ -12,6 +12,8 @@ interface PageProps {
   pageMeta: PageMeta
   category: Category
   categoryId: string
+  relatedArticles: ArticleMeta[]
+  relatedPages: Array<{ page: PageMeta; category: Category }>
 }
 
 const PAGE_MAP: Partial<Record<ContentType, ComponentType<PageProps>>> = {

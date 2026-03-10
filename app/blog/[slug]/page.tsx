@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import type { Metadata } from 'next'
 import { ArticleMeta } from '@/lib/types'
+import RelatedContent from '@/components/RelatedContent'
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>
@@ -53,19 +54,24 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound()
   }
 
-  const relatedPages = article.related_pages
-    .map(pageId => {
-      for (const category of siteConfig.categories) {
-        const page = category.pages.find(p => p.page_id === pageId)
-        if (page) return { page, category }
-      }
-      return null
-    })
-    .filter(Boolean) as Array<{ page: any; category: any }>
+  // Replace with tag-based:
+  const articleTags = article.tags || []
 
-  const moreArticles = (siteConfig.articles || [])
-    .filter(a => a.status === 'published' && a.article_slug !== slug)
-    .slice(0, 3)
+  const relatedPages = articleTags.length > 0
+    ? siteConfig.categories.flatMap(cat =>
+        cat.pages
+          .filter(p => p.tags?.some((t: string) => articleTags.includes(t)))
+          .map(p => ({ page: p, category: cat }))
+      )
+    : []
+
+  const relatedArticles = articleTags.length > 0
+    ? (siteConfig.articles || []).filter(
+        a => a.status === 'published' &&
+        a.article_slug !== slug &&
+        a.tags?.some((t: string) => articleTags.includes(t))
+      )
+    : []
 
   return (
     <div className="mx-auto px-4 py-12" style={{ maxWidth: 'var(--layout-max-width)' }}>
@@ -122,49 +128,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdownContent}</ReactMarkdown>
         </article>
 
-        {relatedPages.length > 0 && (
-          <div className="mb-16 p-8 rounded-xl" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
-            <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--color-text-primary)' }}>Our Top Picks</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {relatedPages.map(({ page, category }) => (
-                <Link
-                  key={page.page_id}
-                  href={`/${category.category_id}/${page.page_id}`}
-                  className="flex items-center gap-3 p-4 rounded-lg hover:shadow-md transition"
-                  style={{ backgroundColor: 'var(--color-bg-secondary)', color: 'var(--color-text-primary)' }}
-                >
-                  <span className="text-2xl" style={{ color: 'var(--color-primary)' }}>→</span>
-                  <div>
-                    <div className="font-semibold text-sm">{page.page_title}</div>
-                    <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{category.category_title}</div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {moreArticles.length > 0 && (
-          <div className="mb-16">
-            <h2 className="text-2xl font-bold mb-6" style={{ color: 'var(--color-text-primary)' }}>More Guides</h2>
-            <div className="space-y-4">
-              {moreArticles.map(a => (
-                <Link
-                  key={a.article_id}
-                  href={`/blog/${a.article_slug}`}
-                  className="flex items-center gap-4 p-4 rounded-lg hover:shadow-md transition"
-                  style={{ backgroundColor: 'var(--color-bg-primary)' }}
-                >
-                  <div className="flex-1">
-                    <div className="font-semibold mb-1" style={{ color: 'var(--color-text-primary)' }}>{a.article_title}</div>
-                    <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>{a.excerpt}</div>
-                  </div>
-                  <span className="font-semibold text-sm shrink-0" style={{ color: 'var(--color-primary)' }}>Read →</span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
+        <RelatedContent relatedArticles={relatedArticles} relatedPages={relatedPages} />
 
         <div className="text-center">
           <Link href="/blog" className="inline-block px-8 py-3 rounded-lg font-semibold transition hover:opacity-90" style={{ backgroundColor: 'var(--color-primary)', color: 'white' }}>
