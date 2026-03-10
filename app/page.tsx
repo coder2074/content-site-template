@@ -94,35 +94,32 @@ export default async function HomePage() {
       {/* Trust Badges */}
       {trustBadges.enabled && (
         <div className="flex flex-wrap justify-center gap-8 mb-16 pb-12 border-b" style={{ borderColor: 'var(--color-bg-secondary)' }}>
-          {trustBadges.mode === 'auto' && stats.total_items_analyzed > 0 ? (
+          {stats.total_items_analyzed > 0 ? (
             <>
               <div className="text-center">
                 <div className="text-3xl font-bold mb-1" style={{ color: 'var(--color-primary)' }}>
                   {stats.total_items_analyzed.toLocaleString()}+
                 </div>
-                <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Items Analyzed</div>
+                <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                  {siteContent.badgeLabels?.itemsAnalyzed || 'Items Analyzed'}
+                </div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold mb-1" style={{ color: 'var(--color-primary)' }}>
                   {stats.total_items_featured}
                 </div>
-                <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Expert Picks</div>
+                <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                  {siteContent.badgeLabels?.itemsFeatured || 'Expert Picks'}
+                </div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold mb-1" style={{ color: 'var(--color-primary)' }}>
                   Top {selectivityRate}%
                 </div>
-                <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Selected</div>
-              </div>
-            </>
-          ) : trustBadges.mode === 'custom' && trustBadges.customBadges ? (
-            <>
-              {trustBadges.customBadges.map((badge, index) => (
-                <div key={index} className="text-center">
-                  <div className="text-3xl font-bold mb-1" style={{ color: 'var(--color-primary)' }}>{badge.value}</div>
-                  <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>{badge.label}</div>
+                <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                  {siteContent.badgeLabels?.selectivity || 'Selected'}
                 </div>
-              ))}
+              </div>
             </>
           ) : (
             <>
@@ -136,7 +133,7 @@ export default async function HomePage() {
           )}
         </div>
       )}
-
+      
       {/* Categories */}
       {categoriesSection.enabled && (
         <>

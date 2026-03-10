@@ -89,9 +89,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   {siteContent.branding.siteName}
                 </div>
               </Link>
-              <Link href="/blog" className="hidden md:block text-sm font-semibold hover:opacity-80 transition" style={{ color: 'white' }}>
-                Guides
-              </Link>
+              {(siteContent.navLinks || []).map((link, index) => (
+                <Link
+                  key={index}
+                  href={link.url}
+                  className="hidden md:block text-sm font-semibold hover:opacity-80 transition"
+                  style={{ color: 'white' }}
+                >
+                  {link.text}
+                </Link>
+              ))}
               <div className="hidden md:flex items-center gap-6 text-sm">
                 {siteContent.trustIndicators.slice(0, 2).map((indicator, index) => (
                   <span key={index} className="flex items-center gap-2">

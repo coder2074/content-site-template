@@ -308,6 +308,12 @@ export interface SiteContent {
   }
   metaDescription: string
   seoKeywords: string[]
+  navLinks: { text: string; url: string }[]
+    badgeLabels: {
+    itemsAnalyzed: string
+    itemsFeatured: string
+    selectivity: string
+  }
 }
 
 // ============================================================================
