@@ -169,7 +169,9 @@ export default async function HomePage() {
       {featuredArticles.length > 0 && (
         <div className="mt-20">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold" style={{ color: 'var(--color-text-primary)' }}>Getting Started</h2>
+            <h2 className="text-3xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
+              {siteContent.featuredArticlesLabel || 'Getting Started'}
+            </h2>
             <Link href="/blog" className="text-sm font-semibold hover:underline" style={{ color: 'var(--color-primary)' }}>
               View all guides →
             </Link>

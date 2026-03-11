@@ -314,6 +314,7 @@ export interface SiteContent {
     itemsFeatured: string
     selectivity: string
   }
+  featuredArticlesLabel: string
 }
 
 // ============================================================================
