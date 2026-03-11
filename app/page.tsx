@@ -72,11 +72,12 @@ export default async function HomePage() {
             dangerouslySetInnerHTML={{ __html: heroContent.headline }}
           />
           <p
-            className="text-xl leading-relaxed mb-8"
+            className="text-xl leading-relaxed mb-12"
             style={{
               color: 'var(--color-text-secondary)',
               maxWidth: heroTheme.layout === 'centered' ? '42rem' : 'none',
-              margin: heroTheme.layout === 'centered' ? '0 auto' : '0'
+              marginLeft: heroTheme.layout === 'centered' ? 'auto' : '0',
+              marginRight: heroTheme.layout === 'centered' ? 'auto' : '0'
             }}
           >
             {heroContent.subheadline}
@@ -136,7 +137,7 @@ export default async function HomePage() {
       
       {/* Categories */}
       {categoriesSection.enabled && (
-        <>
+        <div id="categories"> 
           <h2 className="text-3xl font-bold text-center mb-10" style={{ color: 'var(--color-text-primary)' }}>
             {siteContent.categoriesSection.title}
           </h2>
@@ -161,7 +162,7 @@ export default async function HomePage() {
               />
             ))}
           </div>
-        </>
+        </div>
       )}
 
       {/* Featured Articles */}
@@ -183,7 +184,9 @@ export default async function HomePage() {
 
       {/* About */}
       {about && about.content && (
-        <div className="mt-20 p-8 rounded-xl" style={{ backgroundColor: 'var(--color-bg-primary)', maxWidth: '56rem', margin: '5rem auto 0' }}>
+          <div
+            id="about"
+              className="mt-20 p-8 rounded-xl  scroll-mt-20" style={{ backgroundColor: 'var(--color-bg-primary)', maxWidth: '56rem', margin: '5rem auto 0' }}>
           <h2 className="text-3xl font-bold mb-6" style={{ color: 'var(--color-text-primary)' }}>{about.title}</h2>
           <div className="prose prose-lg max-w-none" style={{ color: 'var(--color-text-secondary)' }} dangerouslySetInnerHTML={{ __html: about.content }} />
         </div>
