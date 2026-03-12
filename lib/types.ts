@@ -315,6 +315,7 @@ export interface SiteContent {
     selectivity: string
   }
   featuredArticlesLabel: string
+  contactEmail: string
 }
 
 // ============================================================================
