@@ -316,6 +316,10 @@ export interface SiteContent {
   }
   featuredArticlesLabel: string
   contactEmail: string
+  analytics?: {
+    googleAnalyticsId?: string
+    googleSearchConsoleId?: string
+  }
 }
 
 // ============================================================================

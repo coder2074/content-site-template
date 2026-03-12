@@ -37,6 +37,22 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en">
       <head>
+        {siteContent.analytics?.googleAnalyticsId && (
+        <>
+          <script async src={`https://www.googletagmanager.com/gtag/js?id=${siteContent.analytics.googleAnalyticsId}`} />
+          <script dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${siteContent.analytics.googleAnalyticsId}');
+            `
+          }} />
+        </>
+        )}
+        {siteContent.analytics?.googleSearchConsoleId && (
+          <meta name="google-site-verification" content={siteContent.analytics.googleSearchConsoleId} />
+        )}
         <style dangerouslySetInnerHTML={{
           __html: `
             :root {
