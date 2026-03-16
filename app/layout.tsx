@@ -9,6 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const siteContent = await fetchSiteContent()
   const themeConfig = await fetchThemeConfig()
   const logoUrl = themeConfig.logo?.url || getSiteHeaderLogoUrl(process.env.NEXT_PUBLIC_SITE_ID)
+  const faviconUrl = themeConfig.favicon?.url || '/favicon.ico'  // add this
 
   return {
     title: {
@@ -18,6 +19,9 @@ export async function generateMetadata(): Promise<Metadata> {
     description: siteContent.metaDescription,
     keywords: siteContent.seoKeywords?.join(', ') ?? '',
     robots: 'index, follow',
+    icons: {                          // add this
+      icon: faviconUrl,
+    },
     openGraph: {
       siteName: siteContent.branding.siteName,
       type: 'website',

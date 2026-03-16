@@ -93,6 +93,7 @@ export interface ThemeConfig {
   colors: ColorsConfig
   typography: TypographyConfig
   logo?: LogoConfig
+  favicon?: FaviconConfig
   layout?: LayoutConfig
   components: ComponentsConfig
   animations?: AnimationsConfig
@@ -115,6 +116,10 @@ export interface TypographyConfig {
 
 export interface LogoConfig {
   url: string; width: number; height: number; position: string
+}
+
+export interface FaviconConfig {
+  url: string;
 }
 
 export interface LayoutConfig {
