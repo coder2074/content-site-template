@@ -48,12 +48,12 @@ export default async function HomePage() {
     <div className="mx-auto px-4 py-16" style={{ maxWidth: 'var(--layout-max-width)' }}>
       {/* Hero */}
       <div
-        className={`mb-16 ${heroContentMaxWidth}`}
+        className={`mb-8 md:mb-16 ${heroContentMaxWidth}`}
         style={{
           background: heroTheme.backgroundStyle === 'gradient'
             ? 'linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%)'
             : heroTheme.backgroundStyle === 'solid' ? 'var(--color-bg-primary)' : 'transparent',
-          padding: heroTheme.backgroundStyle !== 'none' ? '3rem' : '0',
+          padding: heroTheme.backgroundStyle !== 'none' ? 'clamp(1.5rem, 4vw, 3rem)' : '0',
           borderRadius: heroTheme.backgroundStyle !== 'none' ? '1rem' : '0'
         }}
       >
@@ -67,7 +67,7 @@ export default async function HomePage() {
             </div>
           )}
           <h1
-            className="text-5xl md:text-6xl font-black mb-6 leading-tight"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight"
             style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-heading)' }}
             dangerouslySetInnerHTML={{ __html: heroContent.headline }}
           />
@@ -147,7 +147,8 @@ export default async function HomePage() {
               display: 'grid',
               gridTemplateColumns: categoriesSection.layout === 'grid' ? 'repeat(auto-fill, minmax(300px, 320px))' : '1fr',
               gap: categoriesSection.gap,
-              maxWidth: '1024px'
+              maxWidth: '1024px',
+              justifyContent: 'center'
             }}
           >
             {siteConfig.categories.map((category: Category) => (
@@ -188,7 +189,7 @@ export default async function HomePage() {
       {about && about.content && (
           <div
             id="about"
-              className="mt-20 p-8 rounded-xl  scroll-mt-20" style={{ backgroundColor: 'var(--color-bg-primary)', maxWidth: '56rem', margin: '5rem auto 0' }}>
+              className="mt-12 md:mt-20 p-6 md:p-8 rounded-xl  scroll-mt-20" style={{ backgroundColor: 'var(--color-bg-primary)', maxWidth: '56rem', margin: '3rem auto 0' }}>
           <h2 className="text-3xl font-bold mb-6" style={{ color: 'var(--color-text-primary)' }}>{about.title}</h2>
           <div className="prose prose-lg max-w-none" style={{ color: 'var(--color-text-secondary)' }} dangerouslySetInnerHTML={{ __html: about.content }} />
         </div>
