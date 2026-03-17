@@ -1,13 +1,16 @@
 // app/robots.ts
 import type { MetadataRoute } from 'next'
-import { fetchSiteConfig, fetchCategoryContent } from '@/lib/s3'
+import { fetchSiteContent } from '@/lib/s3'
 
 export const dynamic = 'force-static'
 
-const siteConfig = await fetchSiteConfig()
-const SITE_URL = siteConfig.custom_domain || siteConfig.deployment_url || 'https://yourdomain.com'
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const siteContent = await fetchSiteContent()
 
-export default function robots(): MetadataRoute.Robots {
+  const SITE_URL = siteContent.branding?.customDomain
+    ? `https://${siteContent.branding.customDomain}`
+    : 'https://yourdomain.com'
+
   return {
     rules: {
       userAgent: '*',

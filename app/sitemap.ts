@@ -1,14 +1,17 @@
-// app/sitemap.ts
 import type { MetadataRoute } from 'next'
-import { fetchSiteConfig, fetchCategoryContent } from '@/lib/s3'
+import { fetchSiteConfig, fetchSiteContent, fetchCategoryContent } from '@/lib/s3'
 
 export const dynamic = 'force-static'
 
-const siteConfig = await fetchSiteConfig()
-const SITE_URL = siteConfig.custom_domain || siteConfig.deployment_url || 'https://yourdomain.com'
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const siteConfig = await fetchSiteConfig()
+  const [siteConfig, siteContent] = await Promise.all([
+    fetchSiteConfig(),
+    fetchSiteContent(),
+  ])
+
+  const SITE_URL = siteContent.branding?.customDomain
+    ? `https://${siteContent.branding.customDomain}`
+    : 'https://yourdomain.com'
 
   // Homepage
   const routes: MetadataRoute.Sitemap = [
@@ -33,7 +36,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     })
 
-    // Page routes within each category
     for (const page of category.pages) {
       routes.push({
         url: `${SITE_URL}/${category.category_id}/${page.page_id}`,

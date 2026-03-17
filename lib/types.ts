@@ -296,7 +296,12 @@ export interface FAQItem {
 export interface SiteContent {
   schemaVersion: string
   lastUpdated: string
-  branding: { siteName: string; tagline: string; description: string }
+  branding: {
+    siteName: string
+    tagline: string
+    description: string
+    customDomain?: string
+  }
   hero: {
     badge: { text: string }
     headline: string
