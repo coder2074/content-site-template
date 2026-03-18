@@ -3,6 +3,7 @@
 // components/ComparisonTable.tsx
 import { Item, getPricing } from '@/lib/types'
 
+
 export default function ComparisonTable({ offers }: { offers: Item[] }) {
   return (
     <div className="overflow-x-auto bg-white rounded-lg shadow">
@@ -10,6 +11,7 @@ export default function ComparisonTable({ offers }: { offers: Item[] }) {
         <thead className="bg-gray-50 border-b-2 border-gray-200">
           <tr>
             <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Rank</th>
+            <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">Image</th>
             <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Product</th>
             <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Price</th>
             <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Rating</th>
@@ -20,7 +22,8 @@ export default function ComparisonTable({ offers }: { offers: Item[] }) {
           {offers.map((offer: Item) => {
             const pricing = getPricing(offer)
             const priceDisplay = pricing?.display || '-'
-
+            const imageUrl = offer.media?.images?.[0]?.url
+            const imageAlt = offer.media?.images?.[0]?.alt || offer.name
             return (
               <tr key={offer.rank} className="hover:bg-gray-50">
                 <td className="px-6 py-4">
@@ -32,6 +35,19 @@ export default function ComparisonTable({ offers }: { offers: Item[] }) {
                       </span>
                     )}
                   </div>
+                </td>
+                <td className="px-4 py-4">
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt={imageAlt}
+                      className="w-16 h-16 object-contain rounded"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 bg-gray-100 rounded flex items-center justify-center text-gray-300 text-xs">
+                      No image
+                    </div>
+                  )}
                 </td>
                 <td className="px-6 py-4">
                   <div className="font-semibold text-gray-900">{offer.name}</div>
