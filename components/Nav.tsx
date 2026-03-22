@@ -14,8 +14,8 @@ interface NavProps {
   navLinks: NavLink[]
   trustIndicators: string[]
   logoUrl?: string
-  logoWidth?: number
-  logoHeight?: number
+  logoType?: 'icon' | 'wordmark'
+  showSiteName?: boolean
   showLogo?: boolean
   gradientFrom: string
   gradientTo: string
@@ -26,8 +26,8 @@ export default function Nav({
   navLinks,
   trustIndicators,
   logoUrl,
-  logoWidth,
-  logoHeight,
+  logoType = 'icon',
+  showSiteName = true,
   showLogo,
   gradientFrom,
   gradientTo,
@@ -60,10 +60,9 @@ export default function Nav({
           height: 'var(--header-height)',
         }}
       >
-        {/* Full width flex — no maxWidth wrapper, logo guaranteed left */}
         <div className="flex items-center h-full w-full px-4 gap-4">
 
-          {/* Logo + site name — LEFT */}
+          {/* Logo + site name — hard left */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0 group">
             {showLogo && logoUrl && (
               // eslint-disable-next-line @next/next/no-img-element
@@ -71,15 +70,21 @@ export default function Nav({
                 src={logoUrl}
                 alt={siteName}
                 className="object-contain flex-shrink-0"
-                style={{ height: '40px', width: 'auto' }}
+                style={
+                  logoType === 'wordmark'
+                    ? { height: '40px', width: 'auto' }
+                    : { height: '40px', width: '40px', objectFit: 'contain' }
+                }
               />
             )}
-            <span className={`${mobileTextClass} md:text-2xl font-black tracking-tight group-hover:opacity-80 transition`}>
-              {siteName}
-            </span>
+            {showSiteName && (
+              <span className={`${mobileTextClass} md:text-2xl font-black tracking-tight group-hover:opacity-80 transition`}>
+                {siteName}
+              </span>
+            )}
           </Link>
 
-          {/* Desktop nav links — CENTER */}
+          {/* Desktop nav links — center */}
           <div className="hidden md:flex items-center gap-8 flex-1 justify-center">
             {navLinks.map((link, index) => (
               <Link
@@ -92,7 +97,7 @@ export default function Nav({
             ))}
           </div>
 
-          {/* Right side — trust indicators on desktop, hamburger on mobile */}
+          {/* Right side — trust indicators + hamburger */}
           <div className="flex items-center gap-4 ml-auto">
             <div className="hidden md:flex items-center gap-6 text-sm">
               {trustIndicators.slice(0, 2).map((indicator, index) => (

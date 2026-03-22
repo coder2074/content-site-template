@@ -8,6 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const siteContent = await fetchSiteContent()
   const themeConfig = await fetchThemeConfig()
   const logoUrl = themeConfig.logo?.url || getSiteHeaderLogoUrl(process.env.NEXT_PUBLIC_SITE_ID)
+  const faviconUrl = themeConfig.favicon?.url || '/favicon.ico'
 
   return {
     title: {
@@ -17,6 +18,9 @@ export async function generateMetadata(): Promise<Metadata> {
     description: siteContent.metaDescription,
     keywords: siteContent.seoKeywords?.join(', ') ?? '',
     robots: 'index, follow',
+    icons: {
+      icon: faviconUrl,
+    },
     openGraph: {
       siteName: siteContent.branding.siteName,
       type: 'website',
@@ -29,25 +33,27 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const siteContent = await fetchSiteContent()
   const themeConfig = await fetchThemeConfig()
 
-  const logoUrl = themeConfig.logo?.url || getSiteHeaderLogoUrl(process.env.NEXT_PUBLIC_SITE_ID)
   const logoConfig = themeConfig.logo
+  const logoUrl = logoConfig?.url || getSiteHeaderLogoUrl(process.env.NEXT_PUBLIC_SITE_ID)
   const showLogo = !!logoConfig?.url
+  const logoType = logoConfig?.logo_type || 'icon'
+  const showSiteName = logoConfig?.show_site_name !== false  // default true
 
   return (
     <html lang="en">
       <head>
         {siteContent.analytics?.googleAnalyticsId && (
-        <>
-          <script async src={`https://www.googletagmanager.com/gtag/js?id=${siteContent.analytics.googleAnalyticsId}`} />
-          <script dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${siteContent.analytics.googleAnalyticsId}');
-            `
-          }} />
-        </>
+          <>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${siteContent.analytics.googleAnalyticsId}`} />
+            <script dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${siteContent.analytics.googleAnalyticsId}');
+              `
+            }} />
+          </>
         )}
         {siteContent.analytics?.googleSearchConsoleId && (
           <meta name="google-site-verification" content={siteContent.analytics.googleSearchConsoleId} />
@@ -86,9 +92,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           navLinks={siteContent.navLinks || []}
           trustIndicators={siteContent.trustIndicators}
           logoUrl={logoUrl}
-          logoWidth={logoConfig?.width}
-          logoHeight={logoConfig?.height}
           showLogo={showLogo}
+          logoType={logoType}
+          showSiteName={showSiteName}
           gradientFrom={themeConfig.colors.primary}
           gradientTo={themeConfig.colors.secondary}
         />

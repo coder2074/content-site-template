@@ -115,7 +115,15 @@ export interface TypographyConfig {
 }
 
 export interface LogoConfig {
-  url: string; width: number; height: number; position: string
+  url: string;
+  width: number;
+  height: number;
+  position: string;
+  logo_type?: 'icon' | 'wordmark';
+  show_site_name?: boolean;
+  generatedAt?: string;
+  prompt?: string;
+  style?: string;
 }
 
 export interface FaviconConfig {
