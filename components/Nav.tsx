@@ -42,12 +42,10 @@ export default function Nav({
     nameLength <= 22 ? 'text-base' :
     'hidden sm:block'
 
-  // Close menu on route change
   useEffect(() => {
     setMenuOpen(false)
   }, [pathname])
 
-  // Prevent body scroll when menu is open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
@@ -56,50 +54,50 @@ export default function Nav({
   return (
     <>
       <nav
-        className="text-white shadow-lg sticky top-0 z-50"
+        className="text-white shadow-lg sticky top-0 z-50 w-full"
         style={{
           background: `linear-gradient(to right, ${gradientFrom}, ${gradientTo})`,
           height: 'var(--header-height)',
         }}
       >
-        <div className="mx-auto px-4 h-full" style={{ maxWidth: 'var(--layout-max-width)' }}>
-          <div className="flex items-center justify-between h-full">
+        {/* Full width flex — no maxWidth wrapper, logo guaranteed left */}
+        <div className="flex items-center h-full w-full px-4 gap-4">
 
-            {/* Logo + site name */}
-            <Link href="/" className="flex items-center gap-3 group flex-shrink-0">
-              {showLogo && logoUrl && (
-                <img
-                  src={logoUrl}
-                  alt={siteName}
-                  width={logoWidth}
-                  height={logoHeight}
-                  className="object-contain"
-                  style={{ maxHeight: '48px' }}
-                />
-              )}
-              <div className={`${mobileTextClass} sm:text-xl md:text-2xl font-black tracking-tight group-hover:scale-105 transition`}>
-                {siteName}
-              </div>
-            </Link>
+          {/* Logo + site name — LEFT */}
+          <Link href="/" className="flex items-center gap-2 flex-shrink-0 group">
+            {showLogo && logoUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={logoUrl}
+                alt={siteName}
+                className="object-contain flex-shrink-0"
+                style={{ height: '40px', width: 'auto' }}
+              />
+            )}
+            <span className={`${mobileTextClass} md:text-2xl font-black tracking-tight group-hover:opacity-80 transition`}>
+              {siteName}
+            </span>
+          </Link>
 
-            {/* Desktop nav links */}
-            <div className="hidden md:flex items-center gap-8">
-              {navLinks.map((link, index) => (
-                <Link
-                  key={index}
-                  href={link.url}
-                  className="text-sm font-semibold hover:opacity-80 transition"
-                >
-                  {link.text}
-                </Link>
-              ))}
-            </div>
+          {/* Desktop nav links — CENTER */}
+          <div className="hidden md:flex items-center gap-8 flex-1 justify-center">
+            {navLinks.map((link, index) => (
+              <Link
+                key={index}
+                href={link.url}
+                className="text-sm font-semibold hover:opacity-80 transition"
+              >
+                {link.text}
+              </Link>
+            ))}
+          </div>
 
-            {/* Desktop trust indicators */}
+          {/* Right side — trust indicators on desktop, hamburger on mobile */}
+          <div className="flex items-center gap-4 ml-auto">
             <div className="hidden md:flex items-center gap-6 text-sm">
               {trustIndicators.slice(0, 2).map((indicator, index) => (
-                <span key={index} className="flex items-center gap-2">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <span key={index} className="flex items-center gap-1.5 whitespace-nowrap">
+                  <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                   {indicator}
@@ -107,10 +105,10 @@ export default function Nav({
               ))}
             </div>
 
-            {/* Mobile hamburger */}
+            {/* Hamburger */}
             <button
               onClick={() => setMenuOpen(prev => !prev)}
-              className="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 rounded-lg hover:bg-white/10 transition"
+              className="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 rounded-lg hover:bg-white/10 transition flex-shrink-0"
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={menuOpen}
             >
@@ -118,8 +116,8 @@ export default function Nav({
               <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`} />
               <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${menuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
             </button>
-
           </div>
+
         </div>
       </nav>
 
@@ -129,13 +127,14 @@ export default function Nav({
           className="fixed inset-0 z-40 md:hidden"
           onClick={() => setMenuOpen(false)}
         >
-          {/* Backdrop */}
           <div className="absolute inset-0 bg-black/50" />
 
-          {/* Drawer */}
           <div
             className="absolute top-0 right-0 h-full w-72 text-white shadow-xl flex flex-col"
-            style={{ background: `linear-gradient(to bottom, ${gradientFrom}, ${gradientTo})`, marginTop: 'var(--header-height)' }}
+            style={{
+              background: `linear-gradient(to bottom, ${gradientFrom}, ${gradientTo})`,
+              marginTop: 'var(--header-height)',
+            }}
             onClick={e => e.stopPropagation()}
           >
             <nav className="flex flex-col p-6 gap-1">
