@@ -51,7 +51,10 @@ export default function CommerceItemCard({ item }: { item: Item }) {
       {commerce?.review && (
         <div className="bg-blue-50 p-4 rounded-lg mb-6">
           <h4 className="font-semibold text-gray-900 mb-2">Our Take</h4>
-          <p className="text-gray-700 leading-relaxed">{commerce.review.editorial}</p>
+          <div
+            className="text-gray-700 leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: commerce.review.editorial }}
+          />
           {commerce.review.verdict && (
             <p className="text-blue-700 font-semibold mt-2">Verdict: {commerce.review.verdict}</p>
           )}

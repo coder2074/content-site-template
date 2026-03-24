@@ -33,7 +33,7 @@ export default function CommercePage({ pageContent, pageMeta, category, category
       {pageContent.final_recommendation && (
         <div className="bg-blue-600 text-white rounded-xl p-8 mb-12 text-center">
           <h2 className="text-2xl font-bold mb-4">Our Final Recommendation</h2>
-          <p className="text-lg mb-6">{pageContent.final_recommendation.text}</p>
+          <div className="text-lg mb-6" dangerouslySetInnerHTML={{ __html: pageContent.final_recommendation.text }} />
           {pageContent.final_recommendation.cta && (
             <a
               href={pageContent.final_recommendation.cta.url}

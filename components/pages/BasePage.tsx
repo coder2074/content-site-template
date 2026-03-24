@@ -88,7 +88,7 @@ export default function BasePage({
 
       {/* Introduction */}
       {pageContent.introduction && (
-        <p className="text-lg text-gray-700 mb-10 leading-relaxed">{pageContent.introduction}</p>
+        <div className="text-lg text-gray-700 mb-10 leading-relaxed" dangerouslySetInnerHTML={{ __html: pageContent.introduction }} />
       )}
 
       {/* Header Slot (e.g. ComparisonTable for commerce) */}
@@ -117,7 +117,7 @@ export default function BasePage({
             {pageContent.faq.map((item, idx) => (
               <div key={idx} className="bg-white rounded-lg shadow p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">{item.question}</h3>
-                <p className="text-gray-700">{item.answer}</p>
+                  <div className="text-gray-700" dangerouslySetInnerHTML={{ __html: item.answer }} />
               </div>
             ))}
           </div>
