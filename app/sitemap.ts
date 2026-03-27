@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { fetchSiteConfig, fetchSiteContent, fetchCategoryContent } from '@/lib/s3'
+import { fetchSiteConfig, fetchSiteContent, fetchCategoryContent, fetchArticles } from '@/lib/s3'
 
 export const dynamic = 'force-static'
 
@@ -44,6 +44,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           : new Date(),
         changeFrequency: 'monthly',
         priority: 0.6,
+      })
+    }
+  }
+
+  // Articles
+  const articles = siteConfig.articles || []
+  for (const article of articles) {
+    if (article.status === 'published') {
+      routes.push({
+        url: `${SITE_URL}/blog/${article.article_id}`,
+        lastModified: article.last_updated
+          ? new Date(article.last_updated)
+          : new Date(),
+        changeFrequency: 'monthly',
+        priority: 0.7,
       })
     }
   }
