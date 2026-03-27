@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { fetchSiteConfig, fetchSiteContent, fetchCategoryContent, fetchArticles } from '@/lib/s3'
+import { fetchSiteConfig, fetchSiteContent, fetchCategoryContent } from '@/lib/s3'
 
 export const dynamic = 'force-static'
 
