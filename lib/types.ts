@@ -269,11 +269,6 @@ export interface PageContent {
       name: string
       url?: string
     }>
-    aggregateRating?: {
-      '@type': string
-      ratingValue: number
-      reviewCount: number
-    }
   }
   items: Item[]
   comparison_table?: { enabled: boolean }
