@@ -14,7 +14,9 @@ interface CategoryPageProps {
 
 export async function generateStaticParams() {
   const siteConfig = await fetchSiteConfig()
-  return siteConfig.categories.map((category) => ({
+  const categories = siteConfig.categories || []
+  if (categories.length === 0) return [{ category: '_placeholder' }]
+  return categories.map((category) => ({
     category: category.category_id,
   }))
 }
@@ -22,6 +24,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   try {
     const { category: categoryId } = await params
+    if (categoryId === '_placeholder') notFound()
     const categoryContent = await fetchCategoryContent(categoryId)
     if (!categoryContent) return {}
 
@@ -48,6 +51,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { category: categoryId } = await params
+  if (categoryId === '_placeholder') notFound()
   const siteConfig = await fetchSiteConfig()
   const category = siteConfig.categories.find((c) => c.category_id === categoryId)
 

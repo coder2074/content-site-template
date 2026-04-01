@@ -1,3 +1,4 @@
+// app/icon.tsx
 import { fetchThemeConfig } from '@/lib/s3'
 
 export const dynamic = 'force-static'
@@ -11,7 +12,9 @@ export default async function Icon() {
   if (faviconUrl) {
     const response = await fetch(faviconUrl)
     const buffer = await response.arrayBuffer()
-    return new Response(buffer, { headers: { 'Content-Type': 'image/png' } })
+    return new Response(buffer, {
+      headers: { 'Content-Type': 'image/png' }
+    })
   }
 
   return new Response(null, { status: 404 })
