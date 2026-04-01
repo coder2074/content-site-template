@@ -29,7 +29,6 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     const article = (siteConfig.articles || []).find(a => a.article_slug === slug)
     if (!article) return {}
 
-    // Try to get richer metadata from article-content.json
     let articleContent: ArticleContent | null = null
     try {
       articleContent = await fetchArticleContent(slug)
@@ -45,6 +44,15 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   } catch {
     return {}
   }
+}
+
+function getAuthorName(schema: Record<string, unknown>): string | null {
+  const author = schema?.author
+  if (author && typeof author === 'object' && 'name' in author) {
+    const name = (author as { name: unknown }).name
+    if (typeof name === 'string') return name
+  }
+  return null
 }
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
@@ -67,6 +75,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const isRecipe = articleContent.article_content_type === 'recipe'
   const recipe = articleContent.content_type_data?.recipe
   const schemaJson = articleContent.schema
+  const authorName = getAuthorName(schemaJson)
 
   // Tag-based related content
   const articleTags = article.tags || []
@@ -90,7 +99,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   return (
     <div className="mx-auto px-4 py-12" style={{ maxWidth: 'var(--layout-max-width)' }}>
 
-      {/* JSON-LD structured data — injected into <head> */}
+      {/* JSON-LD structured data */}
       {schemaJson && (
         <script
           type="application/ld+json"
@@ -129,10 +138,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             {article.article_title}
           </h1>
           <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-            {/* Author attribution */}
-            {schemaJson?.author && typeof schemaJson.author === 'object' && 'name' in schemaJson.author && (
-              <>By {(schemaJson.author as { name: string }).name} · </>
-            )}
+            {authorName && <>{`By ${authorName} · `}</>}
             Published {new Date(article.published_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
             {article.last_updated !== article.published_date && (
               <> · Updated {new Date(article.last_updated).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</>
@@ -154,7 +160,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </div>
         )}
 
-        {/* Introduction / body markdown — shown for all article types */}
+        {/* Body markdown — shown for all article types */}
         {articleContent.body_markdown && (
           <article
             className="prose prose-lg max-w-none mb-12 prose-headings:font-bold prose-h2:text-3xl prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3 prose-p:leading-relaxed prose-p:mb-4 prose-li:leading-relaxed prose-ul:my-4 prose-ul:list-disc prose-ul:pl-6 prose-ol:my-4 prose-ol:list-decimal prose-ol:pl-6 prose-strong:font-semibold prose-a:underline prose-a:font-medium hover:prose-a:opacity-80"
@@ -164,7 +170,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </article>
         )}
 
-        {/* Recipe card — only rendered for recipe articles */}
+        {/* Recipe card — only for recipe articles */}
         {isRecipe && recipe && (
           <RecipeCard recipe={recipe} title={article.article_title} />
         )}
