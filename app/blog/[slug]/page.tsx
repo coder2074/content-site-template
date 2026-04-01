@@ -6,8 +6,9 @@ import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import type { Metadata } from 'next'
-import { ArticleMeta } from '@/lib/types'
+import { ArticleMeta, ArticleContent } from '@/lib/types'
 import RelatedContent from '@/components/RelatedContent'
+import RecipeCard from '@/components/RecipeCard'
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>
@@ -27,10 +28,19 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     const siteConfig = await fetchSiteConfig()
     const article = (siteConfig.articles || []).find(a => a.article_slug === slug)
     if (!article) return {}
+
+    // Try to get richer metadata from article-content.json
+    let articleContent: ArticleContent | null = null
+    try {
+      articleContent = await fetchArticleContent(slug)
+    } catch {
+      // Fall back to site-config data
+    }
+
     return {
       title: article.article_title,
-      description: article.meta_description,
-      keywords: article.tags?.join(', ') ?? '',
+      description: articleContent?.meta_description ?? article.meta_description,
+      keywords: articleContent?.seo_keywords?.join(', ') ?? article.tags?.join(', ') ?? '',
     }
   } catch {
     return {}
@@ -47,14 +57,18 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   if (!article) notFound()
 
-  let markdownContent: string
+  let articleContent: ArticleContent
   try {
-    markdownContent = await fetchArticleContent(slug)
+    articleContent = await fetchArticleContent(slug)
   } catch {
     notFound()
   }
 
-  // Replace with tag-based:
+  const isRecipe = articleContent.article_content_type === 'recipe'
+  const recipe = articleContent.content_type_data?.recipe
+  const schemaJson = articleContent.schema
+
+  // Tag-based related content
   const articleTags = article.tags || []
 
   const relatedPages = articleTags.length > 0
@@ -75,6 +89,15 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   return (
     <div className="mx-auto px-4 py-12" style={{ maxWidth: 'var(--layout-max-width)' }}>
+
+      {/* JSON-LD structured data — injected into <head> */}
+      {schemaJson && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaJson) }}
+        />
+      )}
+
       <div className="max-w-3xl mx-auto">
         <nav className="text-sm mb-8" style={{ color: 'var(--color-text-secondary)' }}>
           <Link href="/" className="hover:underline" style={{ color: 'var(--color-primary)' }}>Home</Link>
@@ -99,10 +122,17 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               ))}
             </div>
           )}
-          <h1 className="text-4xl md:text-5xl font-black mb-4 leading-tight" style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-heading)' }}>
+          <h1
+            className="text-4xl md:text-5xl font-black mb-4 leading-tight"
+            style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-heading)' }}
+          >
             {article.article_title}
           </h1>
           <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+            {/* Author attribution */}
+            {schemaJson?.author && typeof schemaJson.author === 'object' && 'name' in schemaJson.author && (
+              <>By {(schemaJson.author as { name: string }).name} · </>
+            )}
             Published {new Date(article.published_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
             {article.last_updated !== article.published_date && (
               <> · Updated {new Date(article.last_updated).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</>
@@ -124,14 +154,29 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </div>
         )}
 
-        <article className="prose prose-lg max-w-none mb-16 prose-headings:font-bold prose-h2:text-3xl prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3 prose-p:leading-relaxed prose-p:mb-4 prose-li:leading-relaxed prose-ul:my-4 prose-ul:list-disc prose-ul:pl-6 prose-ol:my-4 prose-ol:list-decimal prose-ol:pl-6 prose-strong:font-semibold prose-a:underline prose-a:font-medium hover:prose-a:opacity-80" style={{ color: 'var(--color-text-primary)' }}>
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdownContent}</ReactMarkdown>
-        </article>
+        {/* Introduction / body markdown — shown for all article types */}
+        {articleContent.body_markdown && (
+          <article
+            className="prose prose-lg max-w-none mb-12 prose-headings:font-bold prose-h2:text-3xl prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3 prose-p:leading-relaxed prose-p:mb-4 prose-li:leading-relaxed prose-ul:my-4 prose-ul:list-disc prose-ul:pl-6 prose-ol:my-4 prose-ol:list-decimal prose-ol:pl-6 prose-strong:font-semibold prose-a:underline prose-a:font-medium hover:prose-a:opacity-80"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{articleContent.body_markdown}</ReactMarkdown>
+          </article>
+        )}
+
+        {/* Recipe card — only rendered for recipe articles */}
+        {isRecipe && recipe && (
+          <RecipeCard recipe={recipe} title={article.article_title} />
+        )}
 
         <RelatedContent relatedArticles={relatedArticles} relatedPages={relatedPages} />
 
         <div className="text-center">
-          <Link href="/blog" className="inline-block px-8 py-3 rounded-lg font-semibold transition hover:opacity-90" style={{ backgroundColor: 'var(--color-primary)', color: 'white' }}>
+          <Link
+            href="/blog"
+            className="inline-block px-8 py-3 rounded-lg font-semibold transition hover:opacity-90"
+            style={{ backgroundColor: 'var(--color-primary)', color: 'white' }}
+          >
             ← All Guides & Articles
           </Link>
         </div>

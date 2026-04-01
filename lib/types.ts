@@ -11,6 +11,14 @@ export type ContentType =
   | 'place'
   | 'person'
 
+export type ArticleContentType =
+  | 'how_to'
+  | 'beginner_guide'
+  | 'buyers_guide'
+  | 'project_plan'
+  | 'product_review'
+  | 'recipe'
+
 // ============================================================================
 // SITE CONFIG
 // ============================================================================
@@ -66,8 +74,8 @@ export interface PageMeta {
   items_featured?: number
   items_analyzed?: number
   last_updated?: string
-  tags?: string[]         
-  seo_keywords?: string[] 
+  tags?: string[]
+  seo_keywords?: string[]
   metadata?: PageMetadata
 }
 
@@ -322,7 +330,7 @@ export interface SiteContent {
   metaDescription: string
   seoKeywords: string[]
   navLinks: { text: string; url: string }[]
-    badgeLabels: {
+  badgeLabels: {
     itemsAnalyzed: string
     itemsFeatured: string
     selectivity: string
@@ -368,15 +376,17 @@ export function getLocation(item: Item): PlaceContentTypeData['location'] | unde
 }
 
 // ============================================================================
-// ARTICLE META
+// ARTICLE META — lives in site-config.json
 // ============================================================================
 
 export interface ArticleMeta {
   article_id: string
   article_slug: string
   article_title: string
+  article_content_type: ArticleContentType
   excerpt: string
   meta_description: string
+  seo_keywords: string[]
   published_date: string
   last_updated: string
   featured: boolean
@@ -384,6 +394,46 @@ export interface ArticleMeta {
   status: string
   tags: string[]
   image_prompt: string
+}
+
+// ============================================================================
+// ARTICLE CONTENT — lives in article-content.json in S3
+// ============================================================================
+
+export interface RecipeInstruction {
+  name: string
+  text: string
+}
+
+export interface RecipeData {
+  cuisine?: string
+  difficulty?: string
+  yield_amount?: number
+  yield_unit?: string
+  prep_time_minutes?: number
+  cook_time_minutes?: number
+  total_time_minutes?: number
+  ingredients?: string[]
+  instructions?: RecipeInstruction[]
+  tips?: string[]
+}
+
+export interface ArticleContentTypeData {
+  recipe?: RecipeData
+}
+
+export interface ArticleContent {
+  schema_version: string
+  article_content_type: ArticleContentType
+  article_title: string
+  meta_description: string
+  seo_keywords: string[]
+  introduction: string
+  disclosure: string | null
+  last_updated: string
+  schema: Record<string, unknown>
+  body_markdown: string
+  content_type_data: ArticleContentTypeData
 }
 
 // ============================================================================

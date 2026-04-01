@@ -2,7 +2,7 @@
 // FILE: lib/s3.ts
 // No key transformation — snake_case from Python backend used directly.
 // ============================================================================
-import { SiteConfig, PageContent, ThemeConfig, SiteContent, CategoryContent } from './types'
+import { SiteConfig, PageContent, ThemeConfig, SiteContent, CategoryContent, ArticleContent } from './types'
 
 const CONTENT_BASE_URL = process.env.CONTENT_BASE_URL
 
@@ -71,15 +71,15 @@ export function hasSiteLogo(themeConfig: any): boolean {
   return !!(themeConfig.logo && themeConfig.logo.url)
 }
 
-export async function fetchArticleContent(slug: string): Promise<string> {
-  const url = `${CONTENT_BASE_URL}/articles/${slug}.md`
+export async function fetchArticleContent(slug: string): Promise<ArticleContent> {
+  const url = `${CONTENT_BASE_URL}/articles/${slug}/article-content.json`
   const response = await fetch(url, { cache: 'force-cache' })
   if (!response.ok) throw new Error(`Failed to fetch article content: ${response.statusText}`)
-  return response.text()
+  return response.json()
 }
 
 export function getArticleImageUrl(articleSlug: string): string {
-  return `${CONTENT_BASE_URL}/articles/${articleSlug}-image.png`
+  return `${CONTENT_BASE_URL}/articles/${articleSlug}/images/hero.jpg`
 }
 
 function getDefaultThemeConfig(): ThemeConfig {
