@@ -1,6 +1,4 @@
-// ============================================================================
-// FILE: components/ArticleCard.tsx
-// ============================================================================
+// components/ArticleCard.tsx
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArticleMeta } from '@/lib/types'
@@ -8,7 +6,7 @@ import { getArticleImageUrl } from '@/lib/s3'
 
 interface ArticleCardProps {
   article: ArticleMeta
-  activeTag?: string  // highlights the active tag on tag pages
+  activeTag?: string
 }
 
 export default function ArticleCard({ article, activeTag }: ArticleCardProps) {
@@ -41,7 +39,7 @@ export default function ArticleCard({ article, activeTag }: ArticleCardProps) {
                 className="px-2 py-1 rounded text-xs font-semibold capitalize"
                 style={{
                   backgroundColor: tag === activeTag
-                    ? 'var(--color-primary)'
+                    ? 'var(--color-tag)'
                     : 'var(--color-bg-secondary)',
                   color: tag === activeTag
                     ? 'white'
@@ -57,10 +55,7 @@ export default function ArticleCard({ article, activeTag }: ArticleCardProps) {
         {/* Title */}
         <h2
           className="text-xl font-bold mb-3 group-hover:underline leading-snug"
-          style={{
-            color: 'var(--color-text-primary)',
-            fontFamily: 'var(--font-heading)'
-          }}
+          style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-heading)' }}
         >
           {article.article_title}
         </h2>
@@ -75,19 +70,14 @@ export default function ArticleCard({ article, activeTag }: ArticleCardProps) {
 
         {/* Footer */}
         <div className="flex items-center justify-between">
-          <span
-            className="text-xs"
-            style={{ color: 'var(--color-text-secondary)' }}
-          >
+          <span className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
             {new Date(article.published_date).toLocaleDateString('en-US', {
-              month: 'long',
-              day: 'numeric',
-              year: 'numeric'
+              month: 'long', day: 'numeric', year: 'numeric'
             })}
           </span>
           <span
             className="text-sm font-semibold group-hover:underline"
-            style={{ color: 'var(--color-primary)' }}
+            style={{ color: 'var(--color-link)' }}
           >
             Read more →
           </span>

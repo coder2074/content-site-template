@@ -1,16 +1,15 @@
-// ============================================================================
-// FILE: app/blog/page.tsx
-// ============================================================================
-import { fetchSiteConfig } from '@/lib/s3'
+// app/blog/page.tsx
+import { fetchSiteConfig, fetchSiteContent } from '@/lib/s3'
 import { ArticleMeta } from '@/lib/types'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import ArticleCard from '@/components/ArticleCard'
 
 export async function generateMetadata(): Promise<Metadata> {
+  const siteContent = await fetchSiteContent()
   return {
     title: 'Guides & Articles',
-    description: 'Woodworking guides, tips, and tutorials to help you build your dream shop.',
+    description: siteContent.metaDescription,
   }
 }
 
@@ -28,10 +27,8 @@ export default async function BlogPage() {
   ).sort()
 
   return (
-    <div
-      className="mx-auto px-4 py-12"
-      style={{ maxWidth: 'var(--layout-max-width)' }}
-    >
+    <div className="mx-auto px-4 py-12" style={{ maxWidth: 'var(--layout-max-width)' }}>
+
       {/* Page Header */}
       <div className="mb-12 text-center">
         <h1
@@ -40,10 +37,7 @@ export default async function BlogPage() {
         >
           Guides & Articles
         </h1>
-        <p
-          className="text-xl max-w-2xl mx-auto"
-          style={{ color: 'var(--color-text-secondary)' }}
-        >
+        <p className="text-xl max-w-2xl mx-auto" style={{ color: 'var(--color-text-secondary)' }}>
           Everything you need to set up your shop, choose the right tools, and start building.
         </p>
       </div>
@@ -51,9 +45,10 @@ export default async function BlogPage() {
       {/* Tag Filter Row */}
       {allTags.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-10 justify-center">
+          {/* "All" — active state uses button background */}
           <span
-            className="px-4 py-2 rounded-full text-sm font-semibold text-white"
-            style={{ backgroundColor: 'var(--color-primary)' }}
+            className="px-4 py-2 rounded-full text-sm font-semibold"
+            style={{ backgroundColor: 'var(--color-button-background)', color: 'var(--color-button-text)' }}
           >
             All
           </span>
@@ -64,7 +59,8 @@ export default async function BlogPage() {
               className="px-4 py-2 rounded-full text-sm font-semibold capitalize transition hover:opacity-80"
               style={{
                 backgroundColor: 'var(--color-bg-primary)',
-                color: 'var(--color-text-secondary)'
+                color: 'var(--color-text-secondary)',
+                border: '1px solid var(--color-tag)',
               }}
             >
               {tag}
@@ -76,9 +72,7 @@ export default async function BlogPage() {
       {/* No articles state */}
       {allArticles.length === 0 && (
         <div className="text-center py-20">
-          <p style={{ color: 'var(--color-text-secondary)' }}>
-            No articles published yet.
-          </p>
+          <p style={{ color: 'var(--color-text-secondary)' }}>No articles published yet.</p>
         </div>
       )}
 

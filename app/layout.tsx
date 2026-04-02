@@ -37,6 +37,25 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const logoType = logoConfig?.logo_type || 'icon'
   const showSiteName = logoConfig?.show_site_name !== false
 
+  const colors = themeConfig.colors || {}
+
+  // Base colors
+  const primary = colors.primary || '#3b82f6'
+  const secondary = colors.secondary || '#8b5cf6'
+  const accent = colors.accent || '#f59e0b'
+
+  // Derived slots — explicit override wins, otherwise fall back to base color
+  const navBackground = colors.navBackground || primary
+  const navGradientTo = colors.navGradientTo || secondary
+  const navText = colors.navText || '#ffffff'
+  const buttonBackground = colors.buttonBackground || primary
+  const buttonText = colors.buttonText || '#ffffff'
+  const linkColor = colors.linkColor || accent
+  const badgeColor = colors.badgeColor || accent
+  const tagColor = colors.tagColor || accent
+  const checkmarkColor = colors.checkmarkColor || accent
+  const footerBorderTop = colors.footerBorderTop || primary
+
   const promiseTitle = siteContent.footer?.promise_title || 'Our Promise'
   const footerNote = siteContent.footer?.footer_note || null
 
@@ -62,16 +81,37 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <style dangerouslySetInnerHTML={{
           __html: `
             :root {
-              --color-primary: ${themeConfig.colors.primary};
-              --color-secondary: ${themeConfig.colors.secondary};
-              --color-accent: ${themeConfig.colors.accent};
-              --color-text-primary: ${themeConfig.colors.text?.primary || '#1f2937'};
-              --color-text-secondary: ${themeConfig.colors.text?.secondary || '#6b7280'};
-              --color-bg-primary: ${themeConfig.colors.background?.primary || '#ffffff'};
-              --color-bg-secondary: ${themeConfig.colors.background?.secondary || '#f9fafb'};
+              /* Base colors */
+              --color-primary: ${primary};
+              --color-secondary: ${secondary};
+              --color-accent: ${accent};
+
+              /* Derived color slots */
+              --color-nav-background: ${navBackground};
+              --color-nav-gradient-to: ${navGradientTo};
+              --color-nav-text: ${navText};
+              --color-button-background: ${buttonBackground};
+              --color-button-text: ${buttonText};
+              --color-link: ${linkColor};
+              --color-badge: ${badgeColor};
+              --color-tag: ${tagColor};
+              --color-checkmark: ${checkmarkColor};
+              --color-footer-border: ${footerBorderTop};
+
+              /* Text colors */
+              --color-text-primary: ${colors.text?.primary || '#1f2937'};
+              --color-text-secondary: ${colors.text?.secondary || '#6b7280'};
+
+              /* Background colors */
+              --color-bg-primary: ${colors.background?.primary || '#ffffff'};
+              --color-bg-secondary: ${colors.background?.secondary || '#f9fafb'};
+
+              /* Typography */
               --font-family: ${themeConfig.typography.fontFamily}, system-ui, sans-serif;
               --font-heading: ${themeConfig.typography.headingFont}, system-ui, sans-serif;
               --font-body: ${themeConfig.typography.bodyFont}, system-ui, sans-serif;
+
+              /* Layout */
               --layout-max-width: ${themeConfig.layout?.maxWidth || '1280px'};
               --layout-padding: ${themeConfig.layout?.containerPadding || '2rem'};
               --header-height: ${themeConfig.layout?.headerHeight || '80px'};
@@ -96,8 +136,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           showLogo={showLogo}
           logoType={logoType}
           showSiteName={showSiteName}
-          gradientFrom={themeConfig.colors.primary}
-          gradientTo={themeConfig.colors.secondary}
+          gradientFrom={navBackground}
+          gradientTo={navGradientTo}
         />
 
         <main className="min-h-screen" style={{ backgroundColor: 'var(--color-bg-secondary)' }}>
@@ -108,7 +148,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           className="text-white py-12 mt-8"
           style={{
             backgroundColor: themeConfig.components.footer?.backgroundColor || '#111827',
-            borderTop: `4px solid var(--color-primary)`
+            borderTop: `4px solid var(--color-footer-border)`
           }}
         >
           <div className="mx-auto px-4" style={{ maxWidth: 'var(--layout-max-width)' }}>
@@ -122,7 +162,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <ul className="text-gray-400 text-sm space-y-2">
                   {siteContent.trustIndicators.map((indicator, index) => (
                     <li key={index} className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"
+                        style={{ color: 'var(--color-checkmark)' }}>
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                       {indicator}

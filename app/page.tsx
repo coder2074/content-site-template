@@ -9,9 +9,7 @@ import { Metadata } from 'next'
 export async function generateMetadata(): Promise<Metadata> {
   const siteContent = await fetchSiteContent()
   return {
-    alternates: {
-      canonical: '/',
-    },
+    alternates: { canonical: '/' },
   }
 }
 
@@ -46,6 +44,7 @@ export default async function HomePage() {
 
   return (
     <div className="mx-auto px-4 py-16" style={{ maxWidth: 'var(--layout-max-width)' }}>
+
       {/* Hero */}
       <div
         className={`mb-8 md:mb-16 ${heroContentMaxWidth}`}
@@ -61,7 +60,7 @@ export default async function HomePage() {
           {heroTheme.badge.enabled && (
             <div
               className="inline-block px-4 py-2 rounded-full text-sm font-semibold mb-4"
-              style={{ backgroundColor: `var(--color-primary)`, color: 'white', opacity: 0.9 }}
+              style={{ backgroundColor: 'var(--color-badge)', color: 'white', opacity: 0.9 }}
             >
               {heroContent.badge.text}
             </div>
@@ -85,7 +84,7 @@ export default async function HomePage() {
           <a
             href={heroContent.cta.url}
             className="inline-block px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg"
-            style={{ backgroundColor: 'var(--color-primary)', color: 'white' }}
+            style={{ backgroundColor: 'var(--color-button-background)', color: 'var(--color-button-text)' }}
           >
             {heroContent.cta.text}
           </a>
@@ -94,7 +93,8 @@ export default async function HomePage() {
 
       {/* Trust Badges */}
       {trustBadges.enabled && (
-        <div className="flex flex-wrap justify-center gap-8 mb-16 pb-12 border-b" style={{ borderColor: 'var(--color-bg-secondary)' }}>
+        <div className="flex flex-wrap justify-center gap-8 mb-16 pb-12 border-b"
+          style={{ borderColor: 'var(--color-bg-secondary)' }}>
           {stats.total_items_analyzed > 0 ? (
             <>
               <div className="text-center">
@@ -126,8 +126,10 @@ export default async function HomePage() {
             <>
               {trustIndicators.map((indicator, index) => (
                 <div key={index} className="flex items-center gap-2">
-                  <span className="text-2xl" style={{ color: 'var(--color-primary)' }}>✓</span>
-                  <span className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>{indicator}</span>
+                  <span className="text-2xl" style={{ color: 'var(--color-checkmark)' }}>✓</span>
+                  <span className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                    {indicator}
+                  </span>
                 </div>
               ))}
             </>
@@ -173,7 +175,8 @@ export default async function HomePage() {
             <h2 className="text-3xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
               {siteContent.featuredArticlesLabel || 'Getting Started'}
             </h2>
-            <Link href="/blog" className="text-sm font-semibold hover:underline" style={{ color: 'var(--color-primary)' }}>
+            <Link href="/blog" className="text-sm font-semibold hover:underline"
+              style={{ color: 'var(--color-link)' }}>
               {siteContent.viewAllArticlesLabel || 'View all guides →'}
             </Link>
           </div>
@@ -192,8 +195,11 @@ export default async function HomePage() {
           className="mt-12 md:mt-20 p-6 md:p-8 rounded-xl scroll-mt-20"
           style={{ backgroundColor: 'var(--color-bg-primary)', maxWidth: '56rem', margin: '3rem auto 0' }}
         >
-          <h2 className="text-3xl font-bold mb-6" style={{ color: 'var(--color-text-primary)' }}>{about.title}</h2>
-          <div className="prose prose-lg max-w-none" style={{ color: 'var(--color-text-secondary)' }} dangerouslySetInnerHTML={{ __html: about.content }} />
+          <h2 className="text-3xl font-bold mb-6" style={{ color: 'var(--color-text-primary)' }}>
+            {about.title}
+          </h2>
+          <div className="prose prose-lg max-w-none" style={{ color: 'var(--color-text-secondary)' }}
+            dangerouslySetInnerHTML={{ __html: about.content }} />
         </div>
       )}
     </div>

@@ -42,10 +42,7 @@ export default function Nav({
     nameLength <= 22 ? 'text-base' :
     'hidden sm:block'
 
-  useEffect(() => {
-    setMenuOpen(false)
-  }, [pathname])
-
+  useEffect(() => { setMenuOpen(false) }, [pathname])
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
@@ -54,15 +51,16 @@ export default function Nav({
   return (
     <>
       <nav
-        className="text-white shadow-lg sticky top-0 z-50 w-full"
+        className="shadow-lg sticky top-0 z-50 w-full"
         style={{
           background: `linear-gradient(to right, ${gradientFrom}, ${gradientTo})`,
           height: 'var(--header-height)',
+          color: 'var(--color-nav-text)',
         }}
       >
         <div className="flex items-center h-full w-full px-4 gap-4">
 
-          {/* Logo + site name — hard left */}
+          {/* Logo + site name */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0 group">
             {showLogo && logoUrl && (
               // eslint-disable-next-line @next/next/no-img-element
@@ -78,19 +76,23 @@ export default function Nav({
               />
             )}
             {showSiteName && (
-              <span className={`${mobileTextClass} md:text-2xl font-black tracking-tight group-hover:opacity-80 transition`}>
+              <span
+                className={`${mobileTextClass} md:text-2xl font-black tracking-tight group-hover:opacity-80 transition`}
+                style={{ color: 'var(--color-nav-text)' }}
+              >
                 {siteName}
               </span>
             )}
           </Link>
 
-          {/* Desktop nav links — center */}
+          {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-8 flex-1 justify-center">
             {navLinks.map((link, index) => (
               <Link
                 key={index}
                 href={link.url}
                 className="text-sm font-semibold hover:opacity-80 transition"
+                style={{ color: 'var(--color-nav-text)' }}
               >
                 {link.text}
               </Link>
@@ -101,8 +103,13 @@ export default function Nav({
           <div className="flex items-center gap-4 ml-auto">
             <div className="hidden md:flex items-center gap-6 text-sm">
               {trustIndicators.slice(0, 2).map((indicator, index) => (
-                <span key={index} className="flex items-center gap-1.5 whitespace-nowrap">
-                  <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <span
+                  key={index}
+                  className="flex items-center gap-1.5 whitespace-nowrap"
+                  style={{ color: 'var(--color-nav-text)' }}
+                >
+                  <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"
+                    style={{ color: 'var(--color-checkmark)' }}>
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                   {indicator}
@@ -117,28 +124,27 @@ export default function Nav({
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={menuOpen}
             >
-              <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-2' : ''}`} />
-              <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`} />
-              <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${menuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+              <span className={`block w-6 h-0.5 transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-2' : ''}`}
+                style={{ backgroundColor: 'var(--color-nav-text)' }} />
+              <span className={`block w-6 h-0.5 transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`}
+                style={{ backgroundColor: 'var(--color-nav-text)' }} />
+              <span className={`block w-6 h-0.5 transition-all duration-300 ${menuOpen ? '-rotate-45 -translate-y-2' : ''}`}
+                style={{ backgroundColor: 'var(--color-nav-text)' }} />
             </button>
           </div>
-
         </div>
       </nav>
 
       {/* Mobile menu drawer */}
       {menuOpen && (
-        <div
-          className="fixed inset-0 z-40 md:hidden"
-          onClick={() => setMenuOpen(false)}
-        >
+        <div className="fixed inset-0 z-40 md:hidden" onClick={() => setMenuOpen(false)}>
           <div className="absolute inset-0 bg-black/50" />
-
           <div
-            className="absolute top-0 right-0 h-full w-72 text-white shadow-xl flex flex-col"
+            className="absolute top-0 right-0 h-full w-72 shadow-xl flex flex-col"
             style={{
               background: `linear-gradient(to bottom, ${gradientFrom}, ${gradientTo})`,
               marginTop: 'var(--header-height)',
+              color: 'var(--color-nav-text)',
             }}
             onClick={e => e.stopPropagation()}
           >
@@ -148,17 +154,19 @@ export default function Nav({
                   key={index}
                   href={link.url}
                   className="text-lg font-semibold py-3 px-4 rounded-lg hover:bg-white/10 transition"
+                  style={{ color: 'var(--color-nav-text)' }}
                   onClick={() => setMenuOpen(false)}
                 >
                   {link.text}
                 </Link>
               ))}
             </nav>
-
             <div className="mt-auto p-6 border-t border-white/20">
               {trustIndicators.map((indicator, index) => (
-                <div key={index} className="flex items-center gap-2 text-sm text-white/80 py-1.5">
-                  <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <div key={index} className="flex items-center gap-2 text-sm py-1.5"
+                  style={{ color: 'var(--color-nav-text)', opacity: 0.8 }}>
+                  <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"
+                    style={{ color: 'var(--color-checkmark)' }}>
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                   {indicator}

@@ -111,6 +111,18 @@ export interface ColorsConfig {
   primary: string
   secondary: string
   accent: string
+  // Derived slots — optional overrides
+  navBackground?: string
+  navGradientTo?: string
+  navText?: string
+  buttonBackground?: string
+  buttonText?: string
+  linkColor?: string
+  badgeColor?: string
+  tagColor?: string
+  checkmarkColor?: string
+  footerBorderTop?: string
+  // Text and background
   text?: { primary: string; secondary: string }
   background?: { primary: string; secondary: string }
 }

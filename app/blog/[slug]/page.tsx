@@ -30,11 +30,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     if (!article) return {}
 
     let articleContent: ArticleContent | null = null
-    try {
-      articleContent = await fetchArticleContent(slug)
-    } catch {
-      // Fall back to site-config data
-    }
+    try { articleContent = await fetchArticleContent(slug) } catch { }
 
     return {
       title: article.article_title,
@@ -77,7 +73,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const schemaJson = articleContent.schema
   const authorName = getAuthorName(schemaJson)
 
-  // Tag-based related content
   const articleTags = article.tags || []
 
   const relatedPages = articleTags.length > 0
@@ -109,9 +104,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
       <div className="max-w-3xl mx-auto">
         <nav className="text-sm mb-8" style={{ color: 'var(--color-text-secondary)' }}>
-          <Link href="/" className="hover:underline" style={{ color: 'var(--color-primary)' }}>Home</Link>
+          <Link href="/" className="hover:underline" style={{ color: 'var(--color-link)' }}>Home</Link>
           {' > '}
-          <Link href="/blog" className="hover:underline" style={{ color: 'var(--color-primary)' }}>Guides & Articles</Link>
+          <Link href="/blog" className="hover:underline" style={{ color: 'var(--color-link)' }}>Guides & Articles</Link>
           {' > '}
           <span>{article.article_title}</span>
         </nav>
@@ -124,7 +119,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                   key={tag}
                   href={`/blog/tag/${tag}`}
                   className="px-3 py-1 rounded-full text-xs font-semibold capitalize hover:opacity-80 transition"
-                  style={{ backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-bg-secondary)' }}
+                  style={{
+                    backgroundColor: 'var(--color-bg-secondary)',
+                    color: 'var(--color-text-secondary)',
+                    border: '1px solid var(--color-tag)'
+                  }}
                 >
                   {tag}
                 </Link>
@@ -160,7 +159,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </div>
         )}
 
-        {/* Body markdown — shown for all article types */}
+        {/* Body markdown */}
         {articleContent.body_markdown && (
           <article
             className="prose prose-lg max-w-none mb-12 prose-headings:font-bold prose-h2:text-3xl prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3 prose-p:leading-relaxed prose-p:mb-4 prose-li:leading-relaxed prose-ul:my-4 prose-ul:list-disc prose-ul:pl-6 prose-ol:my-4 prose-ol:list-decimal prose-ol:pl-6 prose-strong:font-semibold prose-a:underline prose-a:font-medium hover:prose-a:opacity-80"
@@ -170,10 +169,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </article>
         )}
 
-        {/* Recipe card — only for recipe articles */}
-        {isRecipe && recipe && (
-          <RecipeCard recipe={recipe} title={article.article_title} />
-        )}
+        {/* Recipe card */}
+        {isRecipe && recipe && <RecipeCard recipe={recipe} title={article.article_title} />}
 
         <RelatedContent relatedArticles={relatedArticles} relatedPages={relatedPages} />
 
@@ -181,7 +178,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <Link
             href="/blog"
             className="inline-block px-8 py-3 rounded-lg font-semibold transition hover:opacity-90"
-            style={{ backgroundColor: 'var(--color-primary)', color: 'white' }}
+            style={{ backgroundColor: 'var(--color-button-background)', color: 'var(--color-button-text)' }}
           >
             ← All Guides & Articles
           </Link>
