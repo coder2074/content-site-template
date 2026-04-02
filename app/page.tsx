@@ -134,10 +134,10 @@ export default async function HomePage() {
           )}
         </div>
       )}
-      
+
       {/* Categories */}
-      {categoriesSection.enabled && (
-        <div id="categories"> 
+      {categoriesSection.enabled && siteConfig.categories.length > 0 && (
+        <div id="categories">
           <h2 className="text-3xl font-bold text-center mb-10" style={{ color: 'var(--color-text-primary)' }}>
             {siteContent.categoriesSection.title}
           </h2>
@@ -174,7 +174,7 @@ export default async function HomePage() {
               {siteContent.featuredArticlesLabel || 'Getting Started'}
             </h2>
             <Link href="/blog" className="text-sm font-semibold hover:underline" style={{ color: 'var(--color-primary)' }}>
-              View all guides →
+              {siteContent.viewAllArticlesLabel || 'View all guides →'}
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -187,9 +187,11 @@ export default async function HomePage() {
 
       {/* About */}
       {about && about.content && (
-          <div
-            id="about"
-              className="mt-12 md:mt-20 p-6 md:p-8 rounded-xl  scroll-mt-20" style={{ backgroundColor: 'var(--color-bg-primary)', maxWidth: '56rem', margin: '3rem auto 0' }}>
+        <div
+          id="about"
+          className="mt-12 md:mt-20 p-6 md:p-8 rounded-xl scroll-mt-20"
+          style={{ backgroundColor: 'var(--color-bg-primary)', maxWidth: '56rem', margin: '3rem auto 0' }}
+        >
           <h2 className="text-3xl font-bold mb-6" style={{ color: 'var(--color-text-primary)' }}>{about.title}</h2>
           <div className="prose prose-lg max-w-none" style={{ color: 'var(--color-text-secondary)' }} dangerouslySetInnerHTML={{ __html: about.content }} />
         </div>

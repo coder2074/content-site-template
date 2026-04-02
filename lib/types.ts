@@ -326,6 +326,8 @@ export interface SiteContent {
     aboutText: string
     copyright: string
     links: Array<{ text: string; url: string }>
+    promise_title?: string
+    footer_note?: string
   }
   metaDescription: string
   seoKeywords: string[]
@@ -336,6 +338,7 @@ export interface SiteContent {
     selectivity: string
   }
   featuredArticlesLabel: string
+  viewAllArticlesLabel?: string
   contactEmail: string
   analytics?: {
     googleAnalyticsId?: string

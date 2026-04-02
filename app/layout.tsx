@@ -35,7 +35,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const logoUrl = logoConfig?.url || getSiteHeaderLogoUrl(process.env.NEXT_PUBLIC_SITE_ID)
   const showLogo = !!logoConfig?.url
   const logoType = logoConfig?.logo_type || 'icon'
-  const showSiteName = logoConfig?.show_site_name !== false  // default true
+  const showSiteName = logoConfig?.show_site_name !== false
+
+  const promiseTitle = siteContent.footer?.promise_title || 'Our Promise'
+  const footerNote = siteContent.footer?.footer_note || null
 
   return (
     <html lang="en">
@@ -102,7 +105,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </main>
 
         <footer
-          className="text-white py-12 mt-20"
+          className="text-white py-12 mt-8"
           style={{
             backgroundColor: themeConfig.components.footer?.backgroundColor || '#111827',
             borderTop: `4px solid var(--color-primary)`
@@ -115,7 +118,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <p className="text-gray-400 text-sm leading-relaxed">{siteContent.footer.aboutText}</p>
               </div>
               <div>
-                <h4 className="font-semibold mb-3">Our Promise</h4>
+                <h4 className="font-semibold mb-3">{promiseTitle}</h4>
                 <ul className="text-gray-400 text-sm space-y-2">
                   {siteContent.trustIndicators.map((indicator, index) => (
                     <li key={index} className="flex items-center gap-2">
@@ -136,11 +139,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     </li>
                   ))}
                 </ul>
-                <div className="mt-4 pt-4 border-t border-gray-700">
-                  <p className="text-gray-400 text-xs leading-relaxed">
-                    We may earn commissions from qualifying purchases at no extra cost to you.
-                  </p>
-                </div>
+                {footerNote && (
+                  <div className="mt-4 pt-4 border-t border-gray-700">
+                    <p className="text-gray-400 text-xs leading-relaxed">{footerNote}</p>
+                  </div>
+                )}
               </div>
             </div>
             <div className="border-t border-gray-800 pt-6 text-center text-gray-500 text-sm">
