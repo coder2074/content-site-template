@@ -7,14 +7,21 @@ import ArticleCard from '@/components/ArticleCard'
 
 export async function generateMetadata(): Promise<Metadata> {
   const siteContent = await fetchSiteContent()
+  const blogTitle = siteContent.blogSection?.title || 'Guides & Articles'
   return {
-    title: 'Guides & Articles',
+    title: blogTitle,
     description: siteContent.metaDescription,
   }
 }
 
 export default async function BlogPage() {
-  const siteConfig = await fetchSiteConfig()
+  const [siteConfig, siteContent] = await Promise.all([
+    fetchSiteConfig(),
+    fetchSiteContent(),
+  ])
+
+  const blogTitle = siteContent.blogSection?.title || 'Guides & Articles'
+  const blogSubtitle = siteContent.blogSection?.subtitle || ''
 
   const allArticles: ArticleMeta[] = (siteConfig.articles || [])
     .filter((a: ArticleMeta) => a.status === 'published')
@@ -35,11 +42,13 @@ export default async function BlogPage() {
           className="text-5xl font-black mb-4"
           style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-heading)' }}
         >
-          Guides & Articles
+          {blogTitle}
         </h1>
-        <p className="text-xl max-w-2xl mx-auto" style={{ color: 'var(--color-text-secondary)' }}>
-          Everything you need to set up your shop, choose the right tools, and start building.
-        </p>
+        {blogSubtitle && (
+          <p className="text-xl max-w-2xl mx-auto" style={{ color: 'var(--color-text-secondary)' }}>
+            {blogSubtitle}
+          </p>
+        )}
       </div>
 
       {/* Tag Filter Row */}

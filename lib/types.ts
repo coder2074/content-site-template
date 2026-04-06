@@ -352,6 +352,10 @@ export interface SiteContent {
   featuredArticlesLabel: string
   viewAllArticlesLabel?: string
   contactEmail: string
+  blogSection?: {
+    title?: string
+    subtitle?: string
+  }
   analytics?: {
     googleAnalyticsId?: string
     googleSearchConsoleId?: string
