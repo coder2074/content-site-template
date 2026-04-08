@@ -32,6 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const [siteContent, themeConfig] = await Promise.all([
     fetchSiteContent(),
     fetchThemeConfig(),
