@@ -362,6 +362,15 @@ export interface SiteContent {
   }
 }
 
+export interface AccessControlConfig {
+  schema_version: string
+  enabled: boolean
+  mode: 'full' | 'protected_routes' | 'public_routes'
+  protected_routes: string[]
+  public_routes: string[]
+  last_updated: string
+}
+
 // ============================================================================
 // ACCESSORS — clean access to nested content_type_data
 // ============================================================================

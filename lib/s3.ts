@@ -2,7 +2,7 @@
 // FILE: lib/s3.ts
 // No key transformation — snake_case from Python backend used directly.
 // ============================================================================
-import { SiteConfig, PageContent, ThemeConfig, SiteContent, CategoryContent, ArticleContent } from './types'
+import { SiteConfig, PageContent, ThemeConfig, SiteContent, CategoryContent, ArticleContent, AccessControlConfig } from './types'
 
 const CONTENT_BASE_URL = process.env.CONTENT_BASE_URL
 
@@ -30,6 +30,17 @@ export async function fetchSiteContent(): Promise<SiteContent> {
   const response = await fetch(url, { cache: 'force-cache' })
   if (!response.ok) throw new Error(`Failed to fetch site content: ${response.statusText}`)
   return response.json()
+}
+
+export async function fetchAccessControl(): Promise<AccessControlConfig | null> {
+  try {
+    const url = `${CONTENT_BASE_URL}/access-control.json`
+    const response = await fetch(url, { cache: 'force-cache'})
+    if (!response.ok) return null
+    return response.json()
+  } catch {
+    return null
+  }
 }
 
 export async function fetchCategoryContent(categoryId: string): Promise<CategoryContent | null> {
