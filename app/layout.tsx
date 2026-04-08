@@ -1,7 +1,7 @@
 // app/layout.tsx
 import type { Metadata } from 'next'
 import './globals.css'
-import { fetchSiteContent, fetchThemeConfig, fetchAccessControl, getSiteHeaderLogoUrl } from '@/lib/s3'
+import { fetchSiteContent, fetchThemeConfig, getSiteHeaderLogoUrl } from '@/lib/s3'
 import Nav from '@/components/Nav'
 import AuthProvider from '@/components/AuthProvider'
 import AccessControlGate from '@/components/AccessControlGate'
@@ -32,11 +32,9 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const [siteContent, themeConfig, accessControl] = await Promise.all([
+  const [siteContent, themeConfig] = await Promise.all([
     fetchSiteContent(),
     fetchThemeConfig(),
-    fetchAccessControl(),
   ])
 
   // Get pathname for access control — only available in server-rendered mode
