@@ -5,6 +5,7 @@ import { SignIn } from '@clerk/nextjs'
 export default function SignInForm() {
   return (
     <SignIn
+      routing="hash"
       appearance={{
         elements: {
           card: 'shadow-lg rounded-2xl border-0',

@@ -1,5 +1,11 @@
 import SignInForm from '@/components/SignInForm'
 
+export const dynamic = 'force-static'
+
+export function generateStaticParams() {
+  return []
+}
+
 export default function SignInPage() {
   return (
     <div

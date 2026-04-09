@@ -20,23 +20,11 @@ const nextConfig = {
       },
     ],
   },
-  // Inject pathname header for AccessControlGate — server-rendered mode only
-  ...(isServerRendered && {
-    async headers() {
-      return [
-        {
-          source: '/(.*)',
-          headers: [{ key: 'x-pathname', value: '/:path*' }],
-        },
-      ]
-    },
-  }),
   // Turbopack alias — swap AuthProvider for static passthrough in static builds
   ...(!isServerRendered && {
     turbopack: {
       resolveAlias: {
         '@/components/AuthProvider': './components/AuthProviderStatic.tsx',
-        '@/components/AccessControlGate': './components/AccessControlGateStatic.tsx',
         '@/components/SignInForm': './components/SignInFormStatic.tsx',
       },
     },

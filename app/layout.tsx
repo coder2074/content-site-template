@@ -4,7 +4,6 @@ import './globals.css'
 import { fetchSiteContent, fetchThemeConfig, getSiteHeaderLogoUrl } from '@/lib/s3'
 import Nav from '@/components/Nav'
 import AuthProvider from '@/components/AuthProvider'
-import AccessControlGate from '@/components/AccessControlGate'
 import { headers } from 'next/headers'
 
 const isServerRendered = process.env.NEXT_PUBLIC_SERVER_RENDERED === 'true'
@@ -70,13 +69,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   const promiseTitle = siteContent.footer?.promise_title || 'Our Promise'
   const footerNote = siteContent.footer?.footer_note || null
-
-  // Wrap children with AccessControlGate in server-rendered mode
-  const protectedChildren = isServerRendered ? (
-    <AccessControlGate pathname={pathname}>
-      {children}
-    </AccessControlGate>
-  ) : children
 
   return (
     <AuthProvider>
@@ -150,7 +142,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           />
 
           <main className="min-h-screen" style={{ backgroundColor: 'var(--color-bg-secondary)' }}>
-            {protectedChildren}
+            {children}
           </main>
 
           <footer
