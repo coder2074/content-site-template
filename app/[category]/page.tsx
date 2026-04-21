@@ -1,5 +1,5 @@
 // app/[category]/page.tsx
-import { fetchSiteConfig, fetchCategoryContent, getCategoryLogoUrl } from '@/lib/s3'
+import { fetchSiteConfig, fetchCategoryContent, getCategoryLogoUrl, getSiteBaseUrl } from '@/lib/s3'
 import { PageMeta, calculateCategoryStats } from '@/lib/types'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -25,7 +25,10 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   try {
     const { category: categoryId } = await params
     if (categoryId === '_placeholder') notFound()
-    const categoryContent = await fetchCategoryContent(categoryId)
+    const [categoryContent, baseUrl] = await Promise.all([
+      fetchCategoryContent(categoryId),
+      getSiteBaseUrl(),
+    ])
     if (!categoryContent) return {}
 
     const categoryImageUrl = `${process.env.CONTENT_BASE_URL}/categories/${categoryId}/category-logo-image.png`
@@ -35,7 +38,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
       description: categoryContent.meta_description,
       keywords: categoryContent.seo_keywords?.join(', '),
       alternates: {
-        canonical: `/${categoryId}`,
+        canonical: `${baseUrl}/${categoryId}/`,
       },
       openGraph: {
         title: categoryContent.category_title,

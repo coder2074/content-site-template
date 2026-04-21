@@ -32,6 +32,13 @@ export async function fetchSiteContent(): Promise<SiteContent> {
   return response.json()
 }
 
+export async function getSiteBaseUrl(): Promise<string> {
+  const siteContent = await fetchSiteContent()
+  return siteContent.branding?.customDomain
+    ? `https://${siteContent.branding.customDomain}`
+    : 'https://yourdomain.com'
+}
+
 export async function fetchAccessControl(): Promise<AccessControlConfig | null> {
   try {
     const url = `${CONTENT_BASE_URL}/access-control.json`

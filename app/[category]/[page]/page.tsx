@@ -1,5 +1,5 @@
 // app/[category]/[page]/page.tsx
-import { fetchSiteConfig, fetchPageContent, fetchThemeConfig, getSiteHeaderLogoUrl } from '@/lib/s3'
+import { fetchSiteConfig, fetchPageContent, fetchThemeConfig, getSiteHeaderLogoUrl, getSiteBaseUrl } from '@/lib/s3'
 import { notFound } from 'next/navigation'
 import ContentPage from '@/components/pages/ContentPage'
 import type { Metadata } from 'next'
@@ -31,23 +31,26 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: AffiliatePageProps): Promise<Metadata> {
   try {
     const { category, page } = await params
-    const content = await fetchPageContent(category, page)
+    const [pageContent, baseUrl] = await Promise.all([
+      fetchPageContent(category, page),
+      getSiteBaseUrl(),
+    ])
     const themeConfig = await fetchThemeConfig()
 
-    const ogImage = content.items?.[0]?.media?.images?.[0]?.url
+    const ogImage = pageContent.items?.[0]?.media?.images?.[0]?.url
       || themeConfig.logo?.url
       || getSiteHeaderLogoUrl(process.env.NEXT_PUBLIC_SITE_ID)
 
     return {
-      title: content.page_title,
-      description: content.meta_description,
-      keywords: content.seo_keywords?.join(', ') ?? '',
+      title: pageContent.page_title,
+      description: pageContent.meta_description,
+      keywords: pageContent.seo_keywords?.join(', ') ?? '',
       alternates: {
-        canonical: `/${category}/${page}`,
+        canonical: `${baseUrl}/${category}/${page}/`,
       },
       openGraph: {
-        title: content.page_title,
-        description: content.meta_description,
+        title: pageContent.page_title,
+        description: pageContent.meta_description,
         type: 'article',
         images: [{ url: ogImage }],
       },

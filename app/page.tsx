@@ -1,15 +1,18 @@
 // app/page.tsx
 import CategoryCard from '@/components/CategoryCard'
-import { fetchSiteConfig, fetchSiteContent, fetchThemeConfig, getCategoryLogoUrl } from '@/lib/s3'
+import { fetchSiteConfig, fetchSiteContent, fetchThemeConfig, getCategoryLogoUrl, getSiteBaseUrl } from '@/lib/s3'
 import { Category, ArticleMeta } from '@/lib/types'
 import Link from 'next/link'
 import ArticleCard from '@/components/ArticleCard'
 import { Metadata } from 'next'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const siteContent = await fetchSiteContent()
+  const baseUrl = await getSiteBaseUrl()
+
   return {
-    alternates: { canonical: '/' },
+    alternates: { 
+      canonical: `${baseUrl}/`,
+    },
   }
 }
 
