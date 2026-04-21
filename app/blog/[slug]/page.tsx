@@ -1,5 +1,5 @@
 // app/blog/[slug]/page.tsx
-import { fetchSiteConfig, fetchArticleContent, getArticleImageUrl } from '@/lib/s3'
+import { fetchSiteConfig, fetchArticleContent, getArticleImageUrl, getSiteBaseUrl } from '@/lib/s3'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -25,7 +25,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   try {
     const { slug } = await params
-    const siteConfig = await fetchSiteConfig()
+    const [siteConfig, baseUrl] = await Promise.all([
+      fetchSiteConfig(),
+      getSiteBaseUrl(),
+    ])
     const article = (siteConfig.articles || []).find(a => a.article_slug === slug)
     if (!article) return {}
 
@@ -36,6 +39,9 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       title: article.article_title,
       description: articleContent?.meta_description ?? article.meta_description,
       keywords: articleContent?.seo_keywords?.join(', ') ?? article.tags?.join(', ') ?? '',
+      alternates: {
+        canonical: `${baseUrl}/blog/${slug}/`,
+      },
     }
   } catch {
     return {}
@@ -55,7 +61,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params
   if (slug === '_placeholder') notFound()
 
-  const siteConfig = await fetchSiteConfig()
+  const [siteConfig, baseUrl] = await Promise.all([
+    fetchSiteConfig(),
+    getSiteBaseUrl(),
+  ])
+
   const article: ArticleMeta | undefined = (siteConfig.articles || [])
     .find(a => a.article_slug === slug && a.status === 'published')
 
@@ -98,7 +108,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       {schemaJson && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaJson) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            ...schemaJson,
+            url: `${baseUrl}/blog/${slug}/`,
+          }) }}
         />
       )}
 
@@ -159,7 +172,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </div>
         )}
 
-        {/* Body markdown */}
         {articleContent.body_markdown && (
           <article
             className="prose prose-lg max-w-none mb-12 prose-headings:font-bold prose-h2:text-3xl prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3 prose-p:leading-relaxed prose-p:mb-4 prose-li:leading-relaxed prose-ul:my-4 prose-ul:list-disc prose-ul:pl-6 prose-ol:my-4 prose-ol:list-decimal prose-ol:pl-6 prose-strong:font-semibold prose-a:underline prose-a:font-medium hover:prose-a:opacity-80"
@@ -169,7 +181,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </article>
         )}
 
-        {/* Recipe card */}
         {isRecipe && recipe && <RecipeCard recipe={recipe} title={article.article_title} />}
 
         <RelatedContent relatedArticles={relatedArticles} relatedPages={relatedPages} />

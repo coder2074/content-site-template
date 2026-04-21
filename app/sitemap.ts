@@ -53,7 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const article of articles) {
     if (article.status === 'published') {
       routes.push({
-        url: `${SITE_URL}/blog/${article.article_id}`,
+        url: `${SITE_URL}/blog/${article.article_id}/`,
         lastModified: article.last_updated
           ? new Date(article.last_updated)
           : new Date(),
