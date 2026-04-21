@@ -28,7 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const categoryContent = await fetchCategoryContent(category.category_id)
 
     routes.push({
-      url: `${SITE_URL}/${category.category_id}`,
+      url: `${SITE_URL}/${category.category_id}/`,
       lastModified: categoryContent?.last_updated
         ? new Date(categoryContent.last_updated)
         : new Date(),
@@ -38,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     for (const page of category.pages) {
       routes.push({
-        url: `${SITE_URL}/${category.category_id}/${page.page_id}`,
+        url: `${SITE_URL}/${category.category_id}/${page.page_id}/`,
         lastModified: page.last_updated
           ? new Date(page.last_updated)
           : new Date(),
