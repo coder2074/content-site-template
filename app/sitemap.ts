@@ -23,6 +23,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
+  routes.push({
+    url: `${SITE_URL}/blog/`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.8,
+  })
+
   // Category pages
   for (const category of siteConfig.categories) {
     const categoryContent = await fetchCategoryContent(category.category_id)
