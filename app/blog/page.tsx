@@ -1,16 +1,22 @@
 // app/blog/page.tsx
-import { fetchSiteConfig, fetchSiteContent } from '@/lib/s3'
+import { fetchSiteConfig, fetchSiteContent, getSiteBaseUrl } from '@/lib/s3'
 import { ArticleMeta } from '@/lib/types'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import ArticleCard from '@/components/ArticleCard'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const siteContent = await fetchSiteContent()
+  const [siteContent, baseUrl] = await Promise.all([
+    fetchSiteContent(),
+    getSiteBaseUrl(),
+  ])
   const blogTitle = siteContent.blogSection?.title || 'Guides & Articles'
   return {
     title: blogTitle,
     description: siteContent.metaDescription,
+    alternates: {
+      canonical: `${baseUrl}/blog/`,
+    },
   }
 }
 
@@ -54,7 +60,6 @@ export default async function BlogPage() {
       {/* Tag Filter Row */}
       {allTags.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-10 justify-center">
-          {/* "All" — active state uses button background */}
           <span
             className="px-4 py-2 rounded-full text-sm font-semibold"
             style={{ backgroundColor: 'var(--color-button-background)', color: 'var(--color-button-text)' }}
@@ -78,14 +83,12 @@ export default async function BlogPage() {
         </div>
       )}
 
-      {/* No articles state */}
       {allArticles.length === 0 && (
         <div className="text-center py-20">
           <p style={{ color: 'var(--color-text-secondary)' }}>No articles published yet.</p>
         </div>
       )}
 
-      {/* Article Cards Grid */}
       {allArticles.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {allArticles.map(article => (
