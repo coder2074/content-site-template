@@ -29,7 +29,7 @@ export default function RecipeCard({ recipe, title }: RecipeCardProps) {
     })
   }
 
-  const { prep_time_minutes, cook_time_minutes, total_time_minutes, yield_amount, yield_unit, difficulty, cuisine, ingredients, instructions, tips } = recipe
+  const { prep_time_minutes, cook_time_minutes, total_time_minutes, yield_amount, yield_unit, difficulty, cuisine, category, ingredients, instructions, tips } = recipe
 
   return (
     <div className="rounded-2xl overflow-hidden mb-12"
@@ -65,12 +65,14 @@ export default function RecipeCard({ recipe, title }: RecipeCardProps) {
       </div>
 
       {/* Badges */}
-      {(difficulty || cuisine) && (
+      {(difficulty || cuisine || category) && (
         <div className="flex flex-wrap gap-2 px-6 pt-4">
           {difficulty && <span className="px-3 py-1 rounded-full text-xs font-semibold"
             style={{ backgroundColor: 'var(--color-bg-secondary)', color: 'var(--color-text-secondary)' }}>{difficulty}</span>}
           {cuisine && <span className="px-3 py-1 rounded-full text-xs font-semibold"
             style={{ backgroundColor: 'var(--color-bg-secondary)', color: 'var(--color-text-secondary)' }}>{cuisine}</span>}
+          {category && <span className="px-3 py-1 rounded-full text-xs font-semibold"
+            style={{ backgroundColor: 'var(--color-bg-secondary)', color: 'var(--color-text-secondary)' }}>{category}</span>}
         </div>
       )}
 

@@ -18,6 +18,7 @@ export type ArticleContentType =
   | 'diy_project'
   | 'product_review'
   | 'recipe'
+  | 'portfolio_item'
 
 // ============================================================================
 // SITE CONFIG
@@ -435,7 +436,8 @@ export interface RecipeInstruction {
 
 export interface RecipeData {
   cuisine?: string
-  difficulty?: string
+  category?: string
+  difficulty?: 'Easy' | 'Medium' | 'Hard'
   yield_amount?: number
   yield_unit?: string
   prep_time_minutes?: number
@@ -446,8 +448,31 @@ export interface RecipeData {
   tips?: string[]
 }
 
+export type PortfolioItemStatus =
+  | 'available'
+  | 'in_progress'
+  | 'coming_soon'
+  | 'completed'
+  | 'sold'
+
+export interface PortfolioItemDetail {
+  label: string
+  value: string
+}
+
+// content_type_data.portfolio_item: every field optional. The API guarantees
+// link_label is present whenever link is.
+export interface PortfolioItemData {
+  status?: PortfolioItemStatus
+  link?: string
+  link_label?: string
+  details?: PortfolioItemDetail[]
+  price?: string
+}
+
 export interface ArticleContentTypeData {
   recipe?: RecipeData
+  portfolio_item?: PortfolioItemData
 }
 
 export interface ArticleContent {
