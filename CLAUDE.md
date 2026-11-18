@@ -59,15 +59,16 @@ Features usually span all three. When another repo is attached, plan across them
 
 ## Current focus: company landing page (template side)
 
-Building balancedsoftwaredevelopment.com on the platform as a reusable feature. Template work needed:
-- A component for the new **`showcase`** article type: status badge (`live` / `in_development` / `coming_soon`) and a Visit button when `link` is set.
-- A **landing layout** chosen in `theme-config.json` (`content-site` vs `landing`): hero, a grid of showcase article summaries with status badges, About section, and later an email signup form that posts to the API.
-
-Before designing, review `app/page.tsx`, the article components and `RecipeCard`, and `grep -rn "content_type_data"`.
+Building balancedsoftwaredevelopment.com on the platform as a reusable feature. Design decided Nov 18; see "Current focus" in the API repo's `CLAUDE.md` for the fields, build approach and phases. Template work:
+- **Phase 2:** a detail-page component for the new **`portfolio_item`** article type, following `RecipeCard`: status badge (`available` / `in_progress` / `coming_soon` / `completed` / `sold`), a link button using `link_label`, the `details` label/value list, and `price`. All fields optional. AI hero image for now. Add `PortfolioItemData` to `lib/types.ts` and a check next to `isRecipe` in `app/blog/[slug]/page.tsx`.
+- **Phase 3:** a **landing layout** chosen in `theme-config.json` (`content-site` vs `landing`): hero, a portfolio grid, About section, later an email signup form that posts to the API. The grid reads a short summary the API writes into the article list in `site-content.json` (`ArticleMeta`); don't load every article. Today `app/page.tsx` has one fixed layout and `theme-config.json` only toggles sections.
+- **Phase 4:** uploaded photo as hero (all article types), then a gallery component (`gallery`: media references with caption and alt text).
 
 ## Open items
 
 - [ ] Add a `.nvmrc` containing `20`.
 - [ ] Add a comment block to `.env.local.example` (or README) covering build mode, dev Clerk keys, and the restart steps above.
 - [ ] Review `npm audit` critical items (report them; don't auto-fix).
-- [ ] Showcase component and landing layout (after the API side is designed).
+- [ ] Phase 2: `portfolio_item` detail component.
+- [ ] Phase 3: landing layout + portfolio grid.
+- [ ] Phase 4: uploaded hero image, then gallery.
