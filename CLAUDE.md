@@ -49,7 +49,7 @@ Features usually span all three. When another repo is attached, plan across them
 
 - No "site type". The template reads three S3 files per site: `site-content.json`, `theme-config.json`, `access-control.json`.
 - **Pages:** Category → Page with cards. Each card's content type picks its layout: `physical_product`, `service_offer`, `place`, `person`, `list_item`.
-- **Articles:** each has an `article_content_type`: `how_to`, `beginner_guide`, `buyers_guide`, `project_plan`, `product_review`, `recipe`.
+- **Articles:** each has an `article_content_type`: `how_to`, `beginner_guide`, `buyers_guide`, `diy_project`, `product_review`, `recipe`.
 - Structured article types carry their data in `content_type_data.<type>` (e.g. `content_type_data.recipe`, rendered by `RecipeCard`) plus a `schema` JSON-LD block for Google. The body is in `body_markdown`.
 
 ## SEO conventions
