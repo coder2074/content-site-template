@@ -49,8 +49,8 @@ Features usually span all three. When another repo is attached, plan across them
 
 - No "site type". The template reads three S3 files per site: `site-content.json`, `theme-config.json`, `access-control.json`.
 - **Pages:** Category → Page with cards. Each card's content type picks its layout: `physical_product`, `service_offer`, `place`, `person`, `list_item`.
-- **Articles:** each has an `article_content_type`: `how_to`, `beginner_guide`, `buyers_guide`, `diy_project`, `product_review`, `recipe`.
-- Structured article types carry their data in `content_type_data.<type>` (e.g. `content_type_data.recipe`, rendered by `RecipeCard`) plus a `schema` JSON-LD block for Google. The body is in `body_markdown`.
+- **Articles:** each has an `article_content_type`: `how_to`, `beginner_guide`, `buyers_guide`, `diy_project`, `product_review`, `recipe`, `portfolio_item`.
+- Structured article types carry their data in `content_type_data.<type>` (e.g. `content_type_data.recipe`, rendered by `RecipeCard` below the body; `content_type_data.portfolio_item`, rendered by `PortfolioItemCard` above the body) plus a `schema` JSON-LD block for Google. The body is in `body_markdown`.
 
 ## SEO conventions
 
@@ -60,15 +60,29 @@ Features usually span all three. When another repo is attached, plan across them
 ## Current focus: company landing page (template side)
 
 Building balancedsoftwaredevelopment.com on the platform as a reusable feature. Design decided Nov 18; see "Current focus" in the API repo's `CLAUDE.md` for the fields, build approach and phases. Template work:
-- **Phase 2:** a detail-page component for the new **`portfolio_item`** article type, following `RecipeCard`: status badge (`available` / `in_progress` / `coming_soon` / `completed` / `sold`), a link button using `link_label`, the `details` label/value list, and `price`. All fields optional. AI hero image for now. Add `PortfolioItemData` to `lib/types.ts` and a check next to `isRecipe` in `app/blog/[slug]/page.tsx`.
+- ~~**Phase 2:**~~ Done Nov 18: a detail-page component for the new **`portfolio_item`** article type, following `RecipeCard`: status badge (`available` / `in_progress` / `coming_soon` / `completed` / `sold`), a link button using `link_label`, the `details` label/value list, and `price`. All fields optional. AI hero image for now. Add `PortfolioItemData` to `lib/types.ts` and a check next to `isRecipe` in `app/blog/[slug]/page.tsx`.
 - **Phase 3:** a **landing layout** chosen in `theme-config.json` (`content-site` vs `landing`): hero, a portfolio grid, About section, later an email signup form that posts to the API. The grid reads a short summary the API writes into the article list in `site-content.json` (`ArticleMeta`); don't load every article. Today `app/page.tsx` has one fixed layout and `theme-config.json` only toggles sections.
 - **Phase 4:** uploaded photo as hero (all article types), then a gallery component (`gallery`: media references with caption and alt text).
+
+## Manual tests to run
+
+The full list (all phases, API + admin + template) is in the API repo's `CLAUDE.md`. `npm run build` in the sandbox compiles and type-checks but stops at "Collecting page data" because it needs the S3 content URL; run the full build locally. Template-specific checks:
+- [ ] Phase 2: a `portfolio_item` article page shows `PortfolioItemCard` above the body: status badge (dot + label), price, the button with `link_label` opening `link` in a new tab, the details list (stacked on mobile, two columns from `sm`). An item with no fields shows no card. Check a light and a dark theme.
+- [ ] Phase 2: JSON-LD on the page is `CreativeWork` with the trailing-slash `url`.
+- [ ] Phase 2: a recipe page shows the category badge next to cuisine and difficulty.
 
 ## Open items
 
 - [ ] Add a `.nvmrc` containing `20`.
 - [ ] Add a comment block to `.env.local.example` (or README) covering build mode, dev Clerk keys, and the restart steps above.
 - [ ] Review `npm audit` critical items (report them; don't auto-fix).
-- [ ] Phase 2: `portfolio_item` detail component.
+- [x] Phase 2: `portfolio_item` detail component (`PortfolioItemCard`, Nov 18).
+- [x] Recipe types: `category`, `difficulty: 'Easy' | 'Medium' | 'Hard'`; `RecipeCard` shows category (Nov 18).
+- [ ] **Before phase 3 ships the owner's landing page:** per-site status label overrides (e.g. show `available` as "Live" on a software site), probably via `theme-config.json`. Today `PORTFOLIO_STATUS_LABELS` in `PortfolioItemCard.tsx` is fixed. Not built yet.
+- [ ] Pre-existing lint errors: `lib/types.ts` (`any` in a helper near the end) and an unused `title` prop in `RecipeCard.tsx`.
 - [ ] Phase 3: landing layout + portfolio grid.
 - [ ] Phase 4: uploaded hero image, then gallery.
+
+## History
+
+- **Nov 18:** phase 2: `PortfolioItemCard` for `portfolio_item` (above the body), types in `lib/types.ts`, recipe `category` + difficulty type, category badge in `RecipeCard`.

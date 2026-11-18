@@ -9,6 +9,7 @@ import type { Metadata } from 'next'
 import { ArticleMeta, ArticleContent } from '@/lib/types'
 import RelatedContent from '@/components/RelatedContent'
 import RecipeCard from '@/components/RecipeCard'
+import PortfolioItemCard from '@/components/PortfolioItemCard'
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>
@@ -80,6 +81,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   const isRecipe = articleContent.article_content_type === 'recipe'
   const recipe = articleContent.content_type_data?.recipe
+  const isPortfolioItem = articleContent.article_content_type === 'portfolio_item'
+  const portfolioItem = articleContent.content_type_data?.portfolio_item
   const schemaJson = articleContent.schema
   const authorName = getAuthorName(schemaJson)
 
@@ -171,6 +174,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             />
           </div>
         )}
+
+        {isPortfolioItem && portfolioItem && <PortfolioItemCard item={portfolioItem} />}
 
         {articleContent.body_markdown && (
           <article
