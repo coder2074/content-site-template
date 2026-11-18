@@ -15,7 +15,7 @@ export type ArticleContentType =
   | 'how_to'
   | 'beginner_guide'
   | 'buyers_guide'
-  | 'project_plan'
+  | 'diy_project'
   | 'product_review'
   | 'recipe'
 
