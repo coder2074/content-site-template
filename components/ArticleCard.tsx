@@ -1,19 +1,57 @@
 // components/ArticleCard.tsx
+// The one article card: home page featured section, listing and tag pages
+// ('grid'), and related articles on article and category pages ('compact').
+//
+// The title link is "stretched" (an ::after overlay covering the card), so the
+// whole card still opens the article while card-info links (e.g. a portfolio
+// item's "Visit site") can sit on top with relative z-10. A card can't be one
+// big <a>: links inside links are invalid HTML.
+//
+// Type-specific content comes only from ARTICLE_CARD_INFO; no type checks here.
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArticleMeta } from '@/lib/types'
+import { ArticleMeta, ContentTypeLabels } from '@/lib/types'
 import { getArticleImageUrl } from '@/lib/s3'
+import { ARTICLE_CARD_INFO } from '@/components/articleCardInfo'
 
 interface ArticleCardProps {
   article: ArticleMeta
   activeTag?: string
+  variant?: 'grid' | 'compact'
+  contentTypeLabels?: ContentTypeLabels
 }
 
-export default function ArticleCard({ article, activeTag }: ArticleCardProps) {
+export default function ArticleCard({ article, activeTag, variant = 'grid', contentTypeLabels }: ArticleCardProps) {
+  const CardInfo = ARTICLE_CARD_INFO[article.article_content_type]
+  const href = `/blog/${article.article_slug}`
+
+  if (variant === 'compact') {
+    return (
+      <div
+        className="group relative flex items-center gap-4 p-4 rounded-lg hover:shadow-md transition"
+        style={{ backgroundColor: 'var(--color-bg-primary)' }}
+      >
+        <div className="flex-1">
+          <div className="font-semibold mb-1" style={{ color: 'var(--color-text-primary)' }}>
+            <Link href={href} className="after:absolute after:inset-0 after:content-['']">
+              {article.article_title}
+            </Link>
+          </div>
+          <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+            {article.excerpt}
+          </div>
+          {CardInfo && <CardInfo article={article} labels={contentTypeLabels} compact />}
+        </div>
+        <span className="font-semibold text-sm shrink-0" style={{ color: 'var(--color-primary)' }}>
+          Read →
+        </span>
+      </div>
+    )
+  }
+
   return (
-    <Link
-      href={`/blog/${article.article_slug}`}
-      className="group block rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+    <div
+      className="group relative rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
       style={{ backgroundColor: 'var(--color-bg-primary)' }}
     >
       {/* Thumbnail */}
@@ -52,12 +90,14 @@ export default function ArticleCard({ article, activeTag }: ArticleCardProps) {
           </div>
         )}
 
-        {/* Title */}
+        {/* Title (stretched link: the whole card opens the article) */}
         <h2
           className="text-xl font-bold mb-3 group-hover:underline leading-snug"
           style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-heading)' }}
         >
-          {article.article_title}
+          <Link href={href} className="after:absolute after:inset-0 after:content-['']">
+            {article.article_title}
+          </Link>
         </h2>
 
         {/* Excerpt */}
@@ -67,6 +107,9 @@ export default function ArticleCard({ article, activeTag }: ArticleCardProps) {
         >
           {article.excerpt}
         </p>
+
+        {/* Per-type card info (e.g. portfolio status, price, link) */}
+        {CardInfo && <CardInfo article={article} labels={contentTypeLabels} />}
 
         {/* Footer */}
         <div className="flex items-center justify-between">
@@ -83,6 +126,6 @@ export default function ArticleCard({ article, activeTag }: ArticleCardProps) {
           </span>
         </div>
       </div>
-    </Link>
+    </div>
   )
 }

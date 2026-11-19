@@ -2,14 +2,16 @@
 'use client'
 
 import Link from 'next/link'
-import { ArticleMeta, PageMeta, Category } from '@/lib/types'
+import { ArticleMeta, PageMeta, Category, ContentTypeLabels } from '@/lib/types'
+import ArticleCard from '@/components/ArticleCard'
 
 interface RelatedContentProps {
   relatedArticles: ArticleMeta[]
   relatedPages: Array<{ page: PageMeta; category: Category }>
+  contentTypeLabels?: ContentTypeLabels
 }
 
-export default function RelatedContent({ relatedArticles, relatedPages }: RelatedContentProps) {
+export default function RelatedContent({ relatedArticles, relatedPages, contentTypeLabels }: RelatedContentProps) {
   if (relatedArticles.length === 0 && relatedPages.length === 0) return null
 
   return (
@@ -47,24 +49,7 @@ export default function RelatedContent({ relatedArticles, relatedPages }: Relate
           </h2>
           <div className="space-y-4">
             {relatedArticles.map(a => (
-              <Link
-                key={a.article_id}
-                href={`/blog/${a.article_slug}`}
-                className="flex items-center gap-4 p-4 rounded-lg hover:shadow-md transition"
-                style={{ backgroundColor: 'var(--color-bg-primary)' }}
-              >
-                <div className="flex-1">
-                  <div className="font-semibold mb-1" style={{ color: 'var(--color-text-primary)' }}>
-                    {a.article_title}
-                  </div>
-                  <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-                    {a.excerpt}
-                  </div>
-                </div>
-                <span className="font-semibold text-sm shrink-0" style={{ color: 'var(--color-primary)' }}>
-                  Read →
-                </span>
-              </Link>
+              <ArticleCard key={a.article_id} article={a} variant="compact" contentTypeLabels={contentTypeLabels} />
             ))}
           </div>
         </div>
