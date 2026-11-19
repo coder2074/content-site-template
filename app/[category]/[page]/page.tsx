@@ -1,5 +1,5 @@
 // app/[category]/[page]/page.tsx
-import { fetchSiteConfig, fetchPageContent, fetchThemeConfig, getSiteHeaderLogoUrl, getSiteBaseUrl } from '@/lib/s3'
+import { fetchSiteConfig, fetchSiteContent, fetchPageContent, fetchThemeConfig, getSiteHeaderLogoUrl, getSiteBaseUrl } from '@/lib/s3'
 import { notFound } from 'next/navigation'
 import ContentPage from '@/components/pages/ContentPage'
 import type { Metadata } from 'next'
@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: AffiliatePageProps): Promise<
 export default async function AffiliatePage({ params }: AffiliatePageProps) {
   const { category: categoryId, page: pageId } = await params
 
-  const siteConfig = await fetchSiteConfig()
+  const [siteConfig, siteContent] = await Promise.all([fetchSiteConfig(), fetchSiteContent()])
 
   const category = siteConfig.categories.find((c) => c.category_id === categoryId)
   if (!category) notFound()
@@ -121,6 +121,7 @@ console.log('all pages with tags:', siteConfig.categories.flatMap(cat =>
         categoryId={categoryId}
         relatedArticles={relatedArticles}
         relatedPages={relatedPages}
+        contentTypeLabels={siteContent.contentTypeLabels}
       />
     </>
   )

@@ -1,7 +1,7 @@
 'use client'
 
 // components/pages/BasePage.tsx
-import { PageContent, PageMeta, Category, ContentType, formatPageStats, ArticleMeta } from '@/lib/types'
+import { PageContent, PageMeta, Category, ContentType, formatPageStats, ArticleMeta, ContentTypeLabels } from '@/lib/types'
 import Link from 'next/link'
 import ItemCard from '@/components/items/ItemCard'
 import RelatedContent from '../RelatedContent'
@@ -13,6 +13,7 @@ interface BasePageProps {
   categoryId: string
   relatedArticles?: ArticleMeta[]
   relatedPages?: Array<{ page: PageMeta; category: Category }>
+  contentTypeLabels?: ContentTypeLabels
   headerSlot?: React.ReactNode
   footerSlot?: React.ReactNode
 }
@@ -24,6 +25,7 @@ export default function BasePage({
   categoryId,
   relatedArticles = [],
   relatedPages = [],
+  contentTypeLabels,
   headerSlot,
   footerSlot,
 }: BasePageProps) {
@@ -124,7 +126,7 @@ export default function BasePage({
         </div>
       )}
 
-      <RelatedContent relatedArticles={relatedArticles} relatedPages={relatedPages} />
+      <RelatedContent relatedArticles={relatedArticles} relatedPages={relatedPages} contentTypeLabels={contentTypeLabels} />
 
     </div>
   )

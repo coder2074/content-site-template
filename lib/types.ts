@@ -159,6 +159,7 @@ export interface ComponentsConfig {
   hero: HeroComponentConfig
   trustBadges: TrustBadgesComponentConfig
   categoriesSection: CategoriesSectionComponentConfig
+  featuredArticles?: FeaturedArticlesComponentConfig
   comparisonTable?: ComparisonTableComponentConfig
   footer?: FooterComponentConfig
 }
@@ -178,6 +179,19 @@ export interface TrustBadgesComponentConfig {
 
 export interface CategoriesSectionComponentConfig {
   enabled: boolean; layout?: 'grid' | 'list'; columns?: number; gap?: string; title?: string
+}
+
+// Home page article cards. Every field is optional; missing ones fall back to
+// DEFAULT_FEATURED_ARTICLES (lib/featuredArticles.ts), which reproduces the
+// original fixed section.
+export interface FeaturedArticlesComponentConfig {
+  enabled?: boolean
+  columns?: number                        // 1–4, from the md breakpoint (1 column on mobile)
+  gap?: string                            // e.g. '1.5rem'
+  count?: number
+  source?: 'featured' | 'newest'          // featured: featured flag + featured_order; newest: published_date
+  articleContentType?: ArticleContentType | null  // only this type; null/missing = all types
+  showViewAllLink?: boolean
 }
 
 export interface ComparisonTableComponentConfig {
@@ -352,6 +366,8 @@ export interface SiteContent {
   }
   featuredArticlesLabel: string
   viewAllArticlesLabel?: string
+  // Per-site wording for structured article types, keyed by type id
+  contentTypeLabels?: ContentTypeLabels
   contactEmail: string
   blogSection?: {
     title?: string
@@ -405,7 +421,7 @@ export function getLocation(item: Item): PlaceContentTypeData['location'] | unde
 }
 
 // ============================================================================
-// ARTICLE META — lives in site-config.json
+// ARTICLE META — the article list in site-config.json
 // ============================================================================
 
 export interface ArticleMeta {
@@ -423,6 +439,7 @@ export interface ArticleMeta {
   status: string
   tags: string[]
   image_prompt: string
+  card_info?: ArticleCardInfo
 }
 
 // ============================================================================
@@ -468,6 +485,24 @@ export interface PortfolioItemData {
   link_label?: string
   details?: PortfolioItemDetail[]
   price?: string
+}
+
+// card_info.portfolio_item on the article's site-config.json entry: the API's
+// PortfolioItemData.card_summary() (no details).
+export type PortfolioItemCardInfo = Pick<PortfolioItemData, 'status' | 'link' | 'link_label' | 'price'>
+
+// card_info on ArticleMeta: one optional block per structured type that has a
+// card summary, keyed by type id like content_type_data.
+export interface ArticleCardInfo {
+  portfolio_item?: PortfolioItemCardInfo
+}
+
+// contentTypeLabels in site-content.json: per-site wording, keyed by type id.
+// Missing labels fall back to the type's generic ones.
+export interface ContentTypeLabels {
+  portfolio_item?: {
+    status?: Partial<Record<PortfolioItemStatus, string>>
+  }
 }
 
 export interface ArticleContentTypeData {

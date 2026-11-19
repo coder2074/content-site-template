@@ -47,10 +47,16 @@ Features usually span all three. When another repo is attached, plan across them
 
 ## Content model
 
-- No "site type". The template reads three S3 files per site: `site-content.json`, `theme-config.json`, `access-control.json`.
+- No "site type". The template reads four S3 files per site: `site-config.json` (categories, pages and the article list, `ArticleMeta[]`), `site-content.json` (text and labels), `theme-config.json` (design, plus structure and visibility of home page sections), `access-control.json` (login; server-rendered mode only).
+- **Settings rule:** structure and visibility settings go in `theme-config.json`; text and labels go in `site-content.json`.
+- **Article type rule:** every article type is a base article plus an optional structured block. Outside a type's own detail and card-info components, code never branches on `article_content_type`; it looks the type up in a map: `components/articleDetail.tsx` (detail block + position above/below the body, used by `app/blog/[slug]/page.tsx`) and `components/articleCardInfo.ts` (card info, used by `ArticleCard`).
 - **Pages:** Category → Page with cards. Each card's content type picks its layout: `physical_product`, `service_offer`, `place`, `person`, `list_item`.
 - **Articles:** each has an `article_content_type`: `how_to`, `beginner_guide`, `buyers_guide`, `diy_project`, `product_review`, `recipe`, `portfolio_item`.
 - Structured article types carry their data in `content_type_data.<type>` (e.g. `content_type_data.recipe`, rendered by `RecipeCard` below the body; `content_type_data.portfolio_item`, rendered by `PortfolioItemCard` above the body) plus a `schema` JSON-LD block for Google. The body is in `body_markdown`.
+- **Card info:** the API writes an optional `card_info.<type>` on each article's `site-config.json` entry (e.g. `card_info.portfolio_item`: status, link, link_label, price). `ArticleCard` renders the type's card-info component from `ARTICLE_CARD_INFO` (e.g. `PortfolioItemCardInfo`, next to `PortfolioItemCard`). Missing `card_info` = nothing shown.
+- **One card:** `ArticleCard` is used everywhere: `grid` (home featured section, `/blog`, tag pages) and `compact` (related articles, via `RelatedContent`; a copy of the old row look). The title is a stretched link (`after:absolute after:inset-0`) so the whole card opens the article, and card-info links sit above it with `relative z-10` (a card can't be one big `<a>`).
+- **Featured section:** `components.featuredArticles` in `theme-config.json`; `lib/featuredArticles.ts` resolves defaults (`DEFAULT_FEATURED_ARTICLES` = the original section: featured articles by `featured_order`, 3, 3 columns, 1.5rem gap), filters by type, picks `featured` or `newest`, and maps columns (1–4) to fixed Tailwind classes. Always 1 column on phones; a last row that isn't full stays left-aligned. Heading / "View all" text come from `site-content.json`.
+- **Per-site labels:** `contentTypeLabels.<type>` in `site-content.json` (e.g. `portfolio_item.status.available = "Live"`), passed down as `contentTypeLabels` to `ArticleCard`, `RelatedContent` and the detail block; `portfolioStatusLabel()` falls back to `PORTFOLIO_STATUS_LABELS`.
 
 ## SEO conventions
 
@@ -61,15 +67,19 @@ Features usually span all three. When another repo is attached, plan across them
 
 Building balancedsoftwaredevelopment.com on the platform as a reusable feature. Design decided Nov 18; see "Current focus" in the API repo's `CLAUDE.md` for the fields, build approach and phases. Template work:
 - ~~**Phase 2:**~~ Done Nov 18: a detail-page component for the new **`portfolio_item`** article type, following `RecipeCard`: status badge (`available` / `in_progress` / `coming_soon` / `completed` / `sold`), a link button using `link_label`, the `details` label/value list, and `price`. All fields optional. AI hero image for now. Add `PortfolioItemData` to `lib/types.ts` and a check next to `isRecipe` in `app/blog/[slug]/page.tsx`.
-- **Phase 3:** a **landing layout** chosen in `theme-config.json` (`content-site` vs `landing`): hero, a portfolio grid, About section, later an email signup form that posts to the API. The grid reads a short summary the API writes into the article list in `site-content.json` (`ArticleMeta`); don't load every article. Today `app/page.tsx` has one fixed layout and `theme-config.json` only toggles sections.
+- ~~**Phase 3:**~~ Done Nov 19: card info on `ArticleCard` from `card_info` in the `site-config.json` article list, one card everywhere, a configurable featured section (`components.featuredArticles`), per-site status labels. Decided: **no layout switch and no new page types**; a landing page is the normal home page with sections turned off and the featured section filtered to `portfolio_item`. Existing sites look exactly the same unless they change the new settings (checked pixel-for-pixel against `main` with ruvianorecipes' files). Later: an email signup form that posts to the API.
 - **Phase 4:** uploaded photo as hero (all article types), then a gallery component (`gallery`: media references with caption and alt text).
 
 ## Manual tests to run
 
-The full list (all phases, API + admin + template) is in the API repo's `CLAUDE.md`. `npm run build` in the sandbox compiles and type-checks but stops at "Collecting page data" because it needs the S3 content URL; run the full build locally. Template-specific checks:
+The full list (all phases, API + admin + template) is in the API repo's `CLAUDE.md`. `npm run build` in the sandbox compiles and type-checks but stops at "Collecting page data" without the S3 content URL; a session can do a full static build by serving fixture JSON files locally and setting `CONTENT_BASE_URL` to that server (done for phase 3). Run the real build locally. Template-specific checks:
 - [ ] Phase 2: a `portfolio_item` article page shows `PortfolioItemCard` above the body: status badge (dot + label), price, the button with `link_label` opening `link` in a new tab, the details list (stacked on mobile, two columns from `sm`). An item with no fields shows no card. Check a light and a dark theme.
 - [ ] Phase 2: JSON-LD on the page is `CreativeWork` with the trailing-slash `url`.
 - [ ] Phase 2: a recipe page shows the category badge next to cuisine and difficulty.
+- [ ] Phase 3: with no new settings, the home page, `/blog`, a tag page and an article page with related articles look as before; clicking anywhere on a card opens the article; hover still lifts the card.
+- [ ] Phase 3: with `featuredArticles` set (e.g. newest, `portfolio_item`, 4 items, 2 columns, no "View all"), the home page shows those cards with status badge, price and a "Visit site →" button (new tab; the rest of the card opens the article); 1 column on a phone. `enabled: false` hides the section.
+- [ ] Phase 3: `contentTypeLabels.portfolio_item.status.available = "Live"` shows "Live" on cards, related articles and the article page. Check a light and a dark theme (the small badge uses the secondary background).
+- [ ] Phase 3: also build in server-rendered mode (`NEXT_PUBLIC_SERVER_RENDERED=true`, ruvianorecipes) and check the same pages.
 
 ## Open items
 
@@ -78,11 +88,13 @@ The full list (all phases, API + admin + template) is in the API repo's `CLAUDE.
 - [ ] Review `npm audit` critical items (report them; don't auto-fix).
 - [x] Phase 2: `portfolio_item` detail component (`PortfolioItemCard`, Nov 18).
 - [x] Recipe types: `category`, `difficulty: 'Easy' | 'Medium' | 'Hard'`; `RecipeCard` shows category (Nov 18).
-- [ ] **Before phase 3 ships the owner's landing page:** per-site status label overrides (e.g. show `available` as "Live" on a software site), probably via `theme-config.json`. Today `PORTFOLIO_STATUS_LABELS` in `PortfolioItemCard.tsx` is fixed. Not built yet.
+- [x] Per-site status label overrides (`contentTypeLabels` in `site-content.json`) (Nov 19).
 - [ ] Pre-existing lint errors: `lib/types.ts` (`any` in a helper near the end) and an unused `title` prop in `RecipeCard.tsx`.
-- [ ] Phase 3: landing layout + portfolio grid.
+- [x] Phase 3: card info, one `ArticleCard`, configurable featured section (Nov 19).
+- [ ] The article page's breadcrumb and back button say "Guides & Articles" (hard-coded); should probably use `blogSection.title`.
 - [ ] Phase 4: uploaded hero image, then gallery.
 
 ## History
 
 - **Nov 18:** phase 2: `PortfolioItemCard` for `portfolio_item` (above the body), types in `lib/types.ts`, recipe `category` + difficulty type, category badge in `RecipeCard`.
+- **Nov 19:** phase 3: `card_info` types and `PortfolioItemCardInfo`; type → component maps (`articleCardInfo.ts`, `articleDetail.tsx`; the article page no longer checks types); one `ArticleCard` with `grid` / `compact` variants and a stretched title link, used by `RelatedContent` too; `components.featuredArticles` + `lib/featuredArticles.ts`; `contentTypeLabels` passed through the pages (category pages via `BasePage` and its extensions). Fixed the docs: the article list is in `site-config.json`.

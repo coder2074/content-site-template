@@ -1,7 +1,7 @@
 'use client'
 
 // components/pages/extensions/PlacePage.tsx
-import { PageContent, PageMeta, Category, ArticleMeta } from '@/lib/types'
+import { PageContent, PageMeta, Category, ArticleMeta, ContentTypeLabels } from '@/lib/types'
 import BasePage from '../BasePage'
 import dynamic from 'next/dynamic'
 
@@ -21,6 +21,7 @@ interface PlacePageProps {
   categoryId: string
   relatedArticles?: ArticleMeta[]
   relatedPages?: Array<{ page: PageMeta; category: Category }>
+  contentTypeLabels?: ContentTypeLabels
 }
 
 export default function PlacePage({
@@ -29,7 +30,8 @@ export default function PlacePage({
   category,
   categoryId,
   relatedArticles,
-  relatedPages 
+  relatedPages,
+  contentTypeLabels,
 }: PlacePageProps) {
   const locationMap = pageContent.additional_sections?.location_map
 
@@ -49,6 +51,7 @@ export default function PlacePage({
       footerSlot={footerSlot}
       relatedArticles={relatedArticles}
       relatedPages={relatedPages}
+      contentTypeLabels={contentTypeLabels}
     />
   )
 }

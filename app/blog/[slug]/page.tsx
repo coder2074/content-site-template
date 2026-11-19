@@ -1,5 +1,5 @@
 // app/blog/[slug]/page.tsx
-import { fetchSiteConfig, fetchArticleContent, getArticleImageUrl, getSiteBaseUrl } from '@/lib/s3'
+import { fetchSiteConfig, fetchSiteContent, fetchArticleContent, getArticleImageUrl, getSiteBaseUrl } from '@/lib/s3'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -8,8 +8,7 @@ import remarkGfm from 'remark-gfm'
 import type { Metadata } from 'next'
 import { ArticleMeta, ArticleContent } from '@/lib/types'
 import RelatedContent from '@/components/RelatedContent'
-import RecipeCard from '@/components/RecipeCard'
-import PortfolioItemCard from '@/components/PortfolioItemCard'
+import { ARTICLE_DETAIL } from '@/components/articleDetail'
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>
@@ -62,8 +61,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params
   if (slug === '_placeholder') notFound()
 
-  const [siteConfig, baseUrl] = await Promise.all([
+  const [siteConfig, siteContent, baseUrl] = await Promise.all([
     fetchSiteConfig(),
+    fetchSiteContent(),
     getSiteBaseUrl(),
   ])
 
@@ -79,10 +79,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound()
   }
 
-  const isRecipe = articleContent.article_content_type === 'recipe'
-  const recipe = articleContent.content_type_data?.recipe
-  const isPortfolioItem = articleContent.article_content_type === 'portfolio_item'
-  const portfolioItem = articleContent.content_type_data?.portfolio_item
+  const contentTypeLabels = siteContent.contentTypeLabels
+  // The type's structured block (if any) and where it goes; see components/articleDetail.tsx
+  const detail = ARTICLE_DETAIL[articleContent.article_content_type]
+  const detailBlock = detail && (
+    <detail.Component content={articleContent} article={article} labels={contentTypeLabels} />
+  )
   const schemaJson = articleContent.schema
   const authorName = getAuthorName(schemaJson)
 
@@ -175,7 +177,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </div>
         )}
 
-        {isPortfolioItem && portfolioItem && <PortfolioItemCard item={portfolioItem} />}
+        {detail?.position === 'above-body' && detailBlock}
 
         {articleContent.body_markdown && (
           <article
@@ -186,9 +188,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </article>
         )}
 
-        {isRecipe && recipe && <RecipeCard recipe={recipe} title={article.article_title} />}
+        {detail?.position === 'below-body' && detailBlock}
 
-        <RelatedContent relatedArticles={relatedArticles} relatedPages={relatedPages} />
+        <RelatedContent relatedArticles={relatedArticles} relatedPages={relatedPages} contentTypeLabels={contentTypeLabels} />
 
         <div className="text-center">
           <Link

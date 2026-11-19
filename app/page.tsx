@@ -5,6 +5,7 @@ import { Category, ArticleMeta } from '@/lib/types'
 import Link from 'next/link'
 import ArticleCard from '@/components/ArticleCard'
 import { Metadata } from 'next'
+import { FEATURED_GRID_COLUMNS, resolveFeaturedArticlesConfig, selectFeaturedArticles } from '@/lib/featuredArticles'
 
 export async function generateMetadata(): Promise<Metadata> {
   const baseUrl = await getSiteBaseUrl()
@@ -40,10 +41,8 @@ export default async function HomePage() {
   const heroAlignmentClass = { centered: 'text-center', left: 'text-left', right: 'text-right' }[layout]
   const heroContentMaxWidth = { centered: 'max-w-4xl mx-auto', left: 'max-w-4xl', right: 'max-w-4xl ml-auto' }[layout]
 
-  const featuredArticles: ArticleMeta[] = (siteConfig.articles || [])
-    .filter(a => a.featured && a.status === 'published')
-    .sort((a, b) => a.featured_order - b.featured_order)
-    .slice(0, 3)
+  const featuredConfig = resolveFeaturedArticlesConfig(components.featuredArticles)
+  const featuredArticles: ArticleMeta[] = selectFeaturedArticles(siteConfig.articles || [], featuredConfig)
 
   return (
     <div className="mx-auto px-4 py-16" style={{ maxWidth: 'var(--layout-max-width)' }}>
@@ -178,14 +177,16 @@ export default async function HomePage() {
             <h2 className="text-3xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
               {siteContent.featuredArticlesLabel || 'Getting Started'}
             </h2>
-            <Link href="/blog" className="text-sm font-semibold hover:underline"
-              style={{ color: 'var(--color-link)' }}>
-              {siteContent.viewAllArticlesLabel || 'View all guides →'}
-            </Link>
+            {featuredConfig.showViewAllLink && (
+              <Link href="/blog" className="text-sm font-semibold hover:underline"
+                style={{ color: 'var(--color-link)' }}>
+                {siteContent.viewAllArticlesLabel || 'View all guides →'}
+              </Link>
+            )}
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className={`grid ${FEATURED_GRID_COLUMNS[featuredConfig.columns]}`} style={{ gap: featuredConfig.gap }}>
             {featuredArticles.map(article => (
-              <ArticleCard key={article.article_id} article={article} />
+              <ArticleCard key={article.article_id} article={article} contentTypeLabels={siteContent.contentTypeLabels} />
             ))}
           </div>
         </div>

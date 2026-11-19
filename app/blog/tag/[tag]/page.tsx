@@ -1,7 +1,7 @@
 // ============================================================================
 // FILE: app/blog/tag/[tag]/page.tsx
 // ============================================================================
-import { fetchSiteConfig, getSiteBaseUrl } from '@/lib/s3'
+import { fetchSiteConfig, fetchSiteContent, getSiteBaseUrl } from '@/lib/s3'
 import { ArticleMeta } from '@/lib/types'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -52,7 +52,7 @@ export default async function TagPage({ params }: TagPageProps) {
 
   if (tag === '_placeholder') notFound()
 
-  const siteConfig = await fetchSiteConfig()
+  const [siteConfig, siteContent] = await Promise.all([fetchSiteConfig(), fetchSiteContent()])
 
   const allArticles: ArticleMeta[] = (siteConfig.articles || [])
     .filter((a: ArticleMeta) => a.status === 'published')
@@ -127,6 +127,7 @@ export default async function TagPage({ params }: TagPageProps) {
             key={article.article_id}
             article={article}
             activeTag={tag}
+            contentTypeLabels={siteContent.contentTypeLabels}
           />
         ))}
       </div>
