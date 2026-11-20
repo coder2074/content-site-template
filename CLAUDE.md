@@ -57,6 +57,8 @@ Features usually span all three. When another repo is attached, plan across them
 - **One card:** `ArticleCard` is used everywhere: `grid` (home featured section, `/blog`, tag pages) and `compact` (related articles, via `RelatedContent`; a copy of the old row look). The title is a stretched link (`after:absolute after:inset-0`) so the whole card opens the article, and card-info links sit above it with `relative z-10` (a card can't be one big `<a>`).
 - **Featured section:** `components.featuredArticles` in `theme-config.json`; `lib/featuredArticles.ts` resolves defaults (`DEFAULT_FEATURED_ARTICLES` = the original section: featured articles by `featured_order`, 3, 3 columns, 1.5rem gap), filters by type, picks `featured` or `newest`, and maps columns (1–4) to fixed Tailwind classes. Always 1 column on phones; a last row that isn't full stays left-aligned. Heading / "View all" text come from `site-content.json`.
 - **Per-site labels:** `contentTypeLabels.<type>` in `site-content.json` (e.g. `portfolio_item.status.available = "Live"`), passed down as `contentTypeLabels` to `ArticleCard`, `RelatedContent` and the detail block; `portfolioStatusLabel()` falls back to `PORTFOLIO_STATUS_LABELS`.
+- **Blog title:** `blogSection.title` in `site-content.json` names the article list everywhere: `/blog`, the article page's breadcrumb and "← All …" button, and tag pages (title, headline, button). One helper, `lib/blogSection.ts` (`blogTitle()`, fallback "Guides & Articles"; `customBlogTitle()` when a page keeps its own fallback, e.g. the tag headline "{tag} Guides").
+- **Empty trust indicators:** new sites get `trustIndicators: []` (API defaults since Nov 20). Then the home trust badges row (unless the site has item stats), the footer's "Our Promise" column and the mobile menu's list are hidden. `components.trustBadges.enabled: false` hides the row regardless (admin: Theme Settings → Trust Badges).
 
 ## SEO conventions
 
@@ -80,6 +82,7 @@ The full list (all phases, API + admin + template) is in the API repo's `CLAUDE.
 - [ ] Phase 3: with `featuredArticles` set (e.g. newest, `portfolio_item`, 4 items, 2 columns, no "View all"), the home page shows those cards with status badge, price and a "Visit site →" button (new tab; the rest of the card opens the article); 1 column on a phone. `enabled: false` hides the section.
 - [ ] Phase 3: `contentTypeLabels.portfolio_item.status.available = "Live"` shows "Live" on cards, related articles and the article page. Check a light and a dark theme (the small badge uses the secondary background).
 - [ ] Phase 3: also build in server-rendered mode (`NEXT_PUBLIC_SERVER_RENDERED=true`, ruvianorecipes) and check the same pages.
+- [ ] Pre-launch cleanup (Nov 20): with no `blogSection.title`, an article page and tag page look as before. With `blogSection.title = "Projects"`: breadcrumb "Home > Projects > …", "← All Projects" on article and tag pages, tag title "Software Projects". Turn `components.trustBadges.enabled` off: the row under the hero is gone. A new site (empty `trustIndicators`): no "Our Promise" footer column, no trust row, no empty box at the bottom of the mobile menu.
 
 ## Open items
 
@@ -89,12 +92,15 @@ The full list (all phases, API + admin + template) is in the API repo's `CLAUDE.
 - [x] Phase 2: `portfolio_item` detail component (`PortfolioItemCard`, Nov 18).
 - [x] Recipe types: `category`, `difficulty: 'Easy' | 'Medium' | 'Hard'`; `RecipeCard` shows category (Nov 18).
 - [x] Per-site status label overrides (`contentTypeLabels` in `site-content.json`) (Nov 19).
-- [ ] Pre-existing lint errors: `lib/types.ts` (`any` in a helper near the end) and an unused `title` prop in `RecipeCard.tsx`.
+- [x] Pre-existing lint errors in `lib/types.ts` (`any`) and `RecipeCard.tsx` (unused `title`) (Nov 20).
+- [ ] Remaining lint errors (pre-existing, 16): `react/no-unescaped-entities` in `app/privacy`, `app/terms`, `app/contact`, `app/[category]`, `BuyerGuide.tsx`; `no-explicit-any` in `LocationMap.tsx`, `lib/s3.ts`, `proxy.ts`; `react-hooks/set-state-in-effect` in `Nav.tsx` (closing the menu on route change).
 - [x] Phase 3: card info, one `ArticleCard`, configurable featured section (Nov 19).
-- [ ] The article page's breadcrumb and back button say "Guides & Articles" (hard-coded); should probably use `blogSection.title`.
+- [x] The article page's breadcrumb and back button (and tag pages) use `blogSection.title` (Nov 20).
+- [ ] With no `blogSection.title`, the tag headline still says "{tag} Guides" and the related-pages heading "Related Guides" (kept so existing sites don't change).
 - [ ] Phase 4: uploaded hero image, then gallery.
 
 ## History
 
 - **Nov 18:** phase 2: `PortfolioItemCard` for `portfolio_item` (above the body), types in `lib/types.ts`, recipe `category` + difficulty type, category badge in `RecipeCard`.
 - **Nov 19:** phase 3: `card_info` types and `PortfolioItemCardInfo`; type → component maps (`articleCardInfo.ts`, `articleDetail.tsx`; the article page no longer checks types); one `ArticleCard` with `grid` / `compact` variants and a stretched title link, used by `RelatedContent` too; `components.featuredArticles` + `lib/featuredArticles.ts`; `contentTypeLabels` passed through the pages (category pages via `BasePage` and its extensions). Fixed the docs: the article list is in `site-config.json`.
+- **Nov 20:** pre-launch cleanup: `lib/blogSection.ts`; the article page's breadcrumb and back button and tag pages use `blogSection.title` ("Guides & Articles" fallback); empty `trustIndicators` hide the footer column, trust row and mobile-menu list; fixed the `any` in `lib/types.ts` and `RecipeCard`'s unused `title`. Checked with fixture builds: an existing-style site's static output is identical to `main` apart from build ids.

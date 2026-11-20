@@ -93,8 +93,8 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {/* Trust Badges */}
-      {trustBadges.enabled && (
+      {/* Trust Badges (hidden when there's nothing to show: no stats and no trust indicators) */}
+      {trustBadges.enabled && (stats.total_items_analyzed > 0 || trustIndicators.length > 0) && (
         <div className="flex flex-wrap justify-center gap-8 mb-16 pb-12 border-b"
           style={{ borderColor: 'var(--color-bg-secondary)' }}>
           {stats.total_items_analyzed > 0 ? (

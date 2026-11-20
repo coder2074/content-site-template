@@ -158,6 +158,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   <h3 className="text-xl font-bold mb-3">{siteContent.branding.siteName}</h3>
                   <p className="text-gray-400 text-sm leading-relaxed">{siteContent.footer.aboutText}</p>
                 </div>
+                {siteContent.trustIndicators.length > 0 && (
                 <div>
                   <h4 className="font-semibold mb-3">{promiseTitle}</h4>
                   <ul className="text-gray-400 text-sm space-y-2">
@@ -172,6 +173,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     ))}
                   </ul>
                 </div>
+                )}
                 <div>
                   <h4 className="font-semibold mb-3">Links</h4>
                   <ul className="text-gray-400 text-sm space-y-2">
