@@ -9,6 +9,7 @@ import type { Metadata } from 'next'
 import { ArticleMeta, ArticleContent } from '@/lib/types'
 import RelatedContent from '@/components/RelatedContent'
 import { ARTICLE_DETAIL } from '@/components/articleDetail'
+import { blogTitle } from '@/lib/blogSection'
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>
@@ -80,6 +81,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   }
 
   const contentTypeLabels = siteContent.contentTypeLabels
+  const listTitle = blogTitle(siteContent)
   // The type's structured block (if any) and where it goes; see components/articleDetail.tsx
   const detail = ARTICLE_DETAIL[articleContent.article_content_type]
   const detailBlock = detail && (
@@ -124,7 +126,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         <nav className="text-sm mb-8" style={{ color: 'var(--color-text-secondary)' }}>
           <Link href="/" className="hover:underline" style={{ color: 'var(--color-link)' }}>Home</Link>
           {' > '}
-          <Link href="/blog" className="hover:underline" style={{ color: 'var(--color-link)' }}>Guides & Articles</Link>
+          <Link href="/blog" className="hover:underline" style={{ color: 'var(--color-link)' }}>{listTitle}</Link>
           {' > '}
           <span>{article.article_title}</span>
         </nav>
@@ -198,7 +200,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             className="inline-block px-8 py-3 rounded-lg font-semibold transition hover:opacity-90"
             style={{ backgroundColor: 'var(--color-button-background)', color: 'var(--color-button-text)' }}
           >
-            ← All Guides & Articles
+            ← All {listTitle}
           </Link>
         </div>
       </div>

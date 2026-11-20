@@ -547,7 +547,8 @@ export function formatPageStats(page: PageMeta) {
   const priceDisplay = priceRange
     ? typeof priceRange === 'string'
       ? priceRange
-      : `$${(priceRange as any).min?.toFixed(2) ?? '?'}-$${(priceRange as any).max?.toFixed(2) ?? '?'}`
+      // S3 data: optional chaining kept in case min/max are missing
+      : `$${priceRange.min?.toFixed(2) ?? '?'}-$${priceRange.max?.toFixed(2) ?? '?'}`
     : null
 
   return {

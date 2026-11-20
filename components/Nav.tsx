@@ -161,6 +161,7 @@ export default function Nav({
                 </Link>
               ))}
             </nav>
+            {trustIndicators.length > 0 && (
             <div className="mt-auto p-6 border-t border-white/20">
               {trustIndicators.map((indicator, index) => (
                 <div key={index} className="flex items-center gap-2 text-sm py-1.5"
@@ -173,6 +174,7 @@ export default function Nav({
                 </div>
               ))}
             </div>
+            )}
           </div>
         </div>
       )}

@@ -4,13 +4,14 @@ import { ArticleMeta } from '@/lib/types'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import ArticleCard from '@/components/ArticleCard'
+import { blogTitle as getBlogTitle } from '@/lib/blogSection'
 
 export async function generateMetadata(): Promise<Metadata> {
   const [siteContent, baseUrl] = await Promise.all([
     fetchSiteContent(),
     getSiteBaseUrl(),
   ])
-  const blogTitle = siteContent.blogSection?.title || 'Guides & Articles'
+  const blogTitle = getBlogTitle(siteContent)
   return {
     title: blogTitle,
     description: siteContent.metaDescription,
@@ -26,7 +27,7 @@ export default async function BlogPage() {
     fetchSiteContent(),
   ])
 
-  const blogTitle = siteContent.blogSection?.title || 'Guides & Articles'
+  const blogTitle = getBlogTitle(siteContent)
   const blogSubtitle = siteContent.blogSection?.subtitle || ''
 
   const allArticles: ArticleMeta[] = (siteConfig.articles || [])

@@ -15,10 +15,9 @@ function formatTime(minutes: number): string {
 
 interface RecipeCardProps {
   recipe: RecipeData
-  title: string
 }
 
-export default function RecipeCard({ recipe, title }: RecipeCardProps) {
+export default function RecipeCard({ recipe }: RecipeCardProps) {
   const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set())
 
   const toggleIngredient = (index: number) => {

@@ -22,9 +22,9 @@ export interface ArticleDetailEntry {
 export const ARTICLE_DETAIL: Partial<Record<ArticleContentType, ArticleDetailEntry>> = {
   recipe: {
     position: 'below-body',
-    Component: function RecipeDetail({ content, article }) {
+    Component: function RecipeDetail({ content }) {
       const recipe = content.content_type_data?.recipe
-      return recipe ? <RecipeCard recipe={recipe} title={article.article_title} /> : null
+      return recipe ? <RecipeCard recipe={recipe} /> : null
     },
   },
   portfolio_item: {

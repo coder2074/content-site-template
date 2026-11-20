@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import ArticleCard from '@/components/ArticleCard'
+import { blogTitle, customBlogTitle } from '@/lib/blogSection'
 
 interface TagPageProps {
   params: Promise<{ tag: string }>
@@ -33,10 +34,13 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
   const { tag } = await params
-  const baseUrl = await getSiteBaseUrl()
+  const [baseUrl, siteContent] = await Promise.all([getSiteBaseUrl(), fetchSiteContent()])
+  const customTitle = customBlogTitle(siteContent)
   return {
-    title: `${tag.charAt(0).toUpperCase() + tag.slice(1)} Guides & Articles`,
-    description: `Guides and articles tagged with "${tag}".`,
+    title: `${tag.charAt(0).toUpperCase() + tag.slice(1)} ${blogTitle(siteContent)}`,
+    description: customTitle
+      ? `${customTitle} tagged with "${tag}".`
+      : `Guides and articles tagged with "${tag}".`,
     alternates: {
       canonical: `${baseUrl}/blog/tag/${tag}/`,
     },
@@ -78,7 +82,7 @@ export default async function TagPage({ params }: TagPageProps) {
           className="text-5xl font-black mb-4 capitalize"
           style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-heading)' }}
         >
-          {tag} Guides
+          {tag} {customBlogTitle(siteContent) ?? 'Guides'}
         </h1>
         <p
           className="text-xl max-w-2xl mx-auto"
@@ -141,7 +145,7 @@ export default async function TagPage({ params }: TagPageProps) {
             color: 'white'
           }}
         >
-          ← All Guides & Articles
+          ← All {blogTitle(siteContent)}
         </Link>
       </div>
     </div>
